@@ -1,31 +1,50 @@
-from typing import TYPE_CHECKING
+"""Entity-Klasse für den Studenten."""
 
-from sqlalchemy import ForeignKey, String
+from typing import override
+
+from sqlalchemy import ForeignKey, Identity
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from hochschule.entity.base import Base
-
-if TYPE_CHECKING:
-    from hochschule.entity.hochschule import Hochschule
+from hochschule.entity.hochschule import Hochschule
 
 
 class Student(Base):
+    """Entity-Klasse für den Studenten."""
+
     __tablename__ = "student"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    matrikelnummer: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
-    vorname: Mapped[str] = mapped_column(String(50), nullable=False)
-    nachname: Mapped[str] = mapped_column(String(50), nullable=False)
-    email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    matrikelnummer: Mapped[str]
+    """Die Matrikelnummer."""
+
+    vorname: Mapped[str]
+    """Der Vorname."""
+
+    nachname: Mapped[str]
+    """Der Nachname."""
+
+    email: Mapped[str]
+    """Die Emailadresse."""
+
+    id: Mapped[int | None] = mapped_column(
+        Identity(start=1000),
+        primary_key=True,
+    )
+    """Die generierte ID gemäß der zugehörigen IDENTITY-Spalte."""
 
     # Foreign Key für die 1:N-Beziehung
-    hochschule_id: Mapped[int] = mapped_column(
-        ForeignKey("hochschule.id", ondelete="CASCADE"),
-        nullable=False,
-    )
+    hochschule_id: Mapped[int | None] = mapped_column(ForeignKey("hochschule.id"))
+    """ID der zugehörigen Hochschule als Fremdschlüssel in der DB-Tabelle."""
 
     # Rückbeziehung zur Hochschule
-    hochschule: Mapped["Hochschule"] = relationship(
-        "Hochschule",
-        back_populates="studenten",
-    )
+    hochschule: Mapped[Hochschule | None] = relationship(back_populates=Hochschule.studenten)
+    """Das zugehörige transiente Hochschule-Objekt."""
+
+    # __repr__ fuer Entwickler/innen, __str__ fuer User
+    @override
+    def __repr__(self) -> str:
+        """Ausgabe eines Studenten als String ohne die Hochschuldaten."""
+        return (
+            f"Student(id={self.id}, matrikelnummer={self.matrikelnummer}, "
+            f"vorname={self.vorname}, nachname={self.nachname}, email={self.email})"
+        )
