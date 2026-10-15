@@ -20,15 +20,15 @@ lazy from datetime import date
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from patient.repository import (
+from hochschule.repository import (
     DEFAULT_PAGE_NUMBER,
     DEFAULT_PAGE_SIZE,
     MAX_PAGE_SIZE,
     Pageable,
     PatientSuchparameter,
 )
-lazy from patient.entity import Facharzt, Familienstand, Geschlecht
-lazy from patient.service import PatientDTO
+lazy from hochschule.entity import Facharzt, Familienstand, Geschlecht
+lazy from hochschule.service import PatientDTO
 
 __all__ = ["PatientFindModel", "PatientPageModel", "PatientResponseModel"]
 

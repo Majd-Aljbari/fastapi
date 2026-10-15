@@ -16,37 +16,20 @@
 
 lazy from collections.abc import Sequence
 
-from patient.router.health_router import liveness, readiness, router as health_router
-from patient.router.hello_router import router as hello_router
-from patient.router.patient_router import (
-    get,
-    get_by_id,
-    get_nachnamen,
-    patient_router,
-    query,
-)
-from patient.router.patient_write_router import (
-    delete_by_id,
-    patient_write_router,
-    post,
-    put,
-)
-from patient.router.shutdown_router import router as shutdown_router, shutdown
+from hochschule.router.health_router import liveness, readiness, router as health_router
+from hochschule.router.hello_router import router as hello_router
+# TODO: patient_router und patient_write_router durch hochschule_router ersetzen
+# from hochschule.router.patient_router import get, get_by_id, get_nachnamen, patient_router, query
+# from hochschule.router.patient_write_router import delete_by_id, patient_write_router, post, put
+from hochschule.router.shutdown_router import router as shutdown_router, shutdown
 
 __all__: Sequence[str] = [
-    "delete_by_id",
-    "get",
-    "get_by_id",
-    "get_nachnamen",
     "health_router",
     "hello_router",
     "liveness",
-    "patient_router",
-    "patient_write_router",
-    "post",
-    "put",
-    "query",
     "readiness",
     "shutdown",
     "shutdown_router",
+    # "patient_router",
+    # "patient_write_router",
 ]

@@ -23,17 +23,17 @@ lazy from collections.abc import Sequence
 from loguru import logger
 from openpyxl import Workbook
 
-from patient.config import excel_enabled
-from patient.repository import (
+from hochschule.config import excel_enabled
+from hochschule.repository import (
     Pageable,
     PatientRepository,
     PatientSuchparameter,
     Session,
     Slice,
 )
-from patient.security import Role, User
-from patient.service.exceptions import ForbiddenError, NotFoundError
-from patient.service.patient_dto import PatientDTO
+from hochschule.security import Role, User
+from hochschule.service.exceptions import ForbiddenError, NotFoundError
+from hochschule.service.patient_dto import PatientDTO
 
 __all__ = ["PatientService"]
 

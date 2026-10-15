@@ -15,7 +15,7 @@
 
 """Exceptions in der Geschäftslogik."""
 
-lazy from patient.repository.patient_suchparameter import PatientSuchparameter
+lazy from hochschule.repository.patient_suchparameter import PatientSuchparameter
 
 __all__ = [
     "AdresseRequiredError",

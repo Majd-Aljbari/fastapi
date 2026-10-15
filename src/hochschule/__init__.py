@@ -50,8 +50,8 @@ uv run fastapi dev src\patient
 ```
 """
 
-from patient.asgi_server import run
-from patient.fastapi_app import app
+from hochschule.asgi_server import run
+from hochschule.fastapi_app import app
 
 __all__ = ["app", "main"]
 

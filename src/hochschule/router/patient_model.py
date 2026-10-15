@@ -20,10 +20,10 @@ from typing import Annotated, Final, override
 from loguru import logger
 from pydantic import ConfigDict, Field, StringConstraints
 
-from patient.router.patient_update_model import PatientUpdateModel
-lazy from patient.entity import Facharzt, Patient
-lazy from patient.router.adresse_model import AdresseModel
-lazy from patient.router.rechnung_model import RechnungModel
+from hochschule.router.patient_update_model import PatientUpdateModel
+lazy from hochschule.entity import Facharzt, Patient
+lazy from hochschule.router.adresse_model import AdresseModel
+lazy from hochschule.router.rechnung_model import RechnungModel
 
 __all__ = ["PatientModel"]
 

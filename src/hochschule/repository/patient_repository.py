@@ -22,10 +22,10 @@ from loguru import logger
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
-from patient.entity import Patient
-from patient.repository.slice import Slice
-lazy from patient.repository.pageable import Pageable
-lazy from patient.repository.patient_suchparameter import PatientSuchparameter
+from hochschule.entity import Patient
+from hochschule.repository.slice import Slice
+lazy from hochschule.repository.pageable import Pageable
+lazy from hochschule.repository.patient_suchparameter import PatientSuchparameter
 
 __all__ = ["PatientRepository"]
 

@@ -20,8 +20,8 @@ lazy from datetime import date
 
 import strawberry
 
-from patient.entity import Facharzt, Familienstand, Geschlecht, Patient
-from patient.service.adresse_dto import AdresseDTO
+from hochschule.entity import Facharzt, Familienstand, Geschlecht, Patient
+from hochschule.service.adresse_dto import AdresseDTO
 
 __all__ = ["PatientDTO"]
 
