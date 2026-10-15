@@ -14,14 +14,14 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """Modul für den Zugriffsschutz."""
 
-from patient.security.auth_router import router, token
-from patient.security.exceptions import AuthorizationError, LoginError
-from patient.security.response_headers import set_response_headers
-from patient.security.role import Role
-from patient.security.roles_required import RolesRequired
-from patient.security.token_service import TokenService
-from patient.security.user import User
-from patient.security.user_service import UserService
+from hochschule.security.auth_router import router, token
+from hochschule.security.exceptions import AuthorizationError, LoginError
+from hochschule.security.response_headers import set_response_headers
+from hochschule.security.role import Role
+from hochschule.security.roles_required import RolesRequired
+from hochschule.security.token_service import TokenService
+from hochschule.security.user import User
+from hochschule.security.user_service import UserService
 
 __all__ = [
     "AuthorizationError",

@@ -21,15 +21,15 @@ from fastapi import APIRouter, Depends, Query, Request, Response, status
 from fastapi.responses import JSONResponse
 from loguru import logger
 
-from patient.router.constants import ETAG, IF_NONE_MATCH, IF_NONE_MATCH_MIN_LEN
-from patient.router.dependencies import get_service
-from patient.router.patient_find_model import (
+from hochschule.router.constants import ETAG, IF_NONE_MATCH, IF_NONE_MATCH_MIN_LEN
+from hochschule.router.dependencies import get_service
+from hochschule.router.patient_find_model import (
     PatientFindModel,
     PatientPageModel,
     PatientResponseModel,
 )
-from patient.security import Role, RolesRequired, User
-lazy from patient.service import PatientService
+from hochschule.security import Role, RolesRequired, User
+lazy from hochschule.service import PatientService
 
 __all__ = ["patient_router"]
 

@@ -19,17 +19,17 @@ from typing import Final
 
 from loguru import logger
 
-from patient.repository import PatientRepository, Session
-from patient.security import User, UserService
-from patient.service.exceptions import (
+from hochschule.repository import PatientRepository, Session
+from hochschule.security import User, UserService
+from hochschule.service.exceptions import (
     EmailExistsError,
     EmptyUsernameError,
     NotFoundError,
     UsernameExistsError,
     VersionOutdatedError,
 )
-from patient.service.patient_dto import PatientDTO
-lazy from patient.entity import Patient
+from hochschule.service.patient_dto import PatientDTO
+lazy from hochschule.entity import Patient
 
 __all__ = ["PatientWriteService"]
 

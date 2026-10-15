@@ -29,17 +29,17 @@ from strawberry.extensions import PydanticErrorExtension
 from strawberry.fastapi import GraphQLRouter
 lazy from strawberry.types import Info
 
-from patient.config.graphql import graphql_ide
-from patient.graphql_api.graphql_types import (
+from hochschule.config.graphql import graphql_ide
+from hochschule.graphql_api.graphql_types import (
     CreatePayload,
     LoginResult,
     PatientInput,
     Suchparameter,
 )
-from patient.repository import Pageable, PatientRepository, PatientSuchparameter
-from patient.router.patient_model import PatientModel
-from patient.security import Role, TokenService, UserService
-from patient.service import (
+from hochschule.repository import Pageable, PatientRepository, PatientSuchparameter
+from hochschule.router.patient_model import PatientModel
+from hochschule.security import Role, TokenService, UserService
+from hochschule.service import (
     NotFoundError,
     PatientDTO,
     PatientService,

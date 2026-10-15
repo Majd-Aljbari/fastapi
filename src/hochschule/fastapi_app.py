@@ -30,35 +30,37 @@ from loguru import logger
 from prometheus_fastapi_instrumentator import Instrumentator
 from pyinstrument import Profiler
 
-from patient.banner import banner
-from patient.config import (
+from hochschule.banner import banner
+from hochschule.config import (
     dev_db_populate,
     dev_keycloak_populate,
     profiling,
 )
-from patient.config.dev.db_populate import db_populate
-from patient.config.dev.db_populate_router import router as db_populate_router
-from patient.config.dev.keycloak_populate import keycloak_populate
-from patient.config.dev.keycloak_populate_router import (
+from hochschule.config.dev.db_populate import db_populate
+from hochschule.config.dev.db_populate_router import router as db_populate_router
+from hochschule.config.dev.keycloak_populate import keycloak_populate
+from hochschule.config.dev.keycloak_populate_router import (
     router as keycloak_populate_router,
 )
-from patient.graphql_api import graphql_router
-from patient.problem_details import ProblemDetails
-from patient.repository.session_factory import engine
-from patient.router import (
+from hochschule.problem_details import ProblemDetails
+from hochschule.repository.session_factory import engine
+from hochschule.router import (
     health_router,
     hello_router,
-    patient_router,
-    patient_write_router,
     shutdown_router,
+    # TODO: patient_router durch hochschule_router ersetzen
+    # patient_router,
+    # patient_write_router,
 )
-from patient.security import (
+# TODO: graphql_router aktivieren sobald hochschule GraphQL Types erstellt sind
+# from hochschule.graphql_api import graphql_router
+from hochschule.security import (
     AuthorizationError,
     LoginError,
     router as auth_router,
     set_response_headers,
 )
-from patient.service import (
+from hochschule.service import (
     EmailExistsError,
     ForbiddenError,
     NotFoundError,
@@ -154,8 +156,9 @@ async def log_response_time(
 # --------------------------------------------------------------------------------------
 # R E S T
 # --------------------------------------------------------------------------------------
-app.include_router(patient_router, prefix="/rest")
-app.include_router(patient_write_router, prefix="/rest")
+# TODO: hochschule_router aktivieren sobald erstellt
+# app.include_router(hochschule_router, prefix="/rest")
+# app.include_router(hochschule_write_router, prefix="/rest")
 app.include_router(auth_router, prefix="/auth")
 app.include_router(health_router, prefix="/health")
 app.include_router(shutdown_router, prefix="/admin")
@@ -167,10 +170,6 @@ if dev_keycloak_populate:
     app.include_router(keycloak_populate_router, prefix="/dev")
 
 
-# --------------------------------------------------------------------------------------
-# G r a p h Q L
-# --------------------------------------------------------------------------------------
-app.include_router(graphql_router, prefix="/graphql")
 
 
 # --------------------------------------------------------------------------------------

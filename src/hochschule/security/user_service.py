@@ -25,9 +25,9 @@ from loguru import logger
 from urllib3 import disable_warnings
 from urllib3.exceptions import InsecureRequestWarning
 
-from patient.config import keycloak_admin_config
-from patient.security.role import Role
-from patient.security.user import User
+from hochschule.config import keycloak_admin_config
+from hochschule.security.role import Role
+from hochschule.security.user import User
 
 __all__ = ["UserService"]
 

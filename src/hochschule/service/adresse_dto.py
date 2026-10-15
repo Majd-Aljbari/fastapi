@@ -19,8 +19,8 @@ from dataclasses import dataclass
 
 import strawberry
 
-from patient.service.exceptions import AdresseRequiredError
-lazy from patient.entity import Adresse
+from hochschule.service.exceptions import AdresseRequiredError
+lazy from hochschule.entity import Adresse
 
 
 # Mit der Funktion asdict() kann ein Objekt einfach in ein dict konvertiert werden
