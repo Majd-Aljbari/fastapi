@@ -1,5 +1,7 @@
 """Modul für den DB-Zugriff."""
 
+from hochschule.repository.hochschule_repository import HochschuleRepository
+from hochschule.repository.hochschule_suchparameter import HochschuleSuchparameter
 from hochschule.repository.pageable import (
     DEFAULT_PAGE_NUMBER,
     DEFAULT_PAGE_SIZE,
@@ -17,10 +19,10 @@ __all__ = [
     "DEFAULT_PAGE_NUMBER",
     "DEFAULT_PAGE_SIZE",
     "MAX_PAGE_SIZE",
+    "HochschuleRepository",
+    "HochschuleSuchparameter",
     "Pageable",
     "Session",
     "Slice",
     "engine",
-    # "PatientRepository",
-    # "PatientSuchparameter",
 ]

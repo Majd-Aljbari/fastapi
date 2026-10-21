@@ -1,6 +1,6 @@
 """Entity-Klasse für Hochschuldaten."""
 
-from typing import Self, override
+from typing import Optional, Self, override
 lazy from dataclasses import InitVar
 lazy from datetime import date, datetime
 
@@ -26,7 +26,7 @@ class Hochschule(Base):
     homepage: Mapped[str | None]
     """Die optionale URL der Homepage."""
 
-    adresse: Mapped["Adresse" | None] = relationship(
+    adresse: Mapped[Optional["Adresse"]] = relationship(
         back_populates=lambda: Adresse.hochschule,
         innerjoin=True,
         cascade="save-update, delete",

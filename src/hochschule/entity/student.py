@@ -1,12 +1,11 @@
 """Entity-Klasse für den Studenten."""
 
-from typing import override
+from typing import Optional, override
 
 from sqlalchemy import ForeignKey, Identity
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from hochschule.entity.base import Base
-from hochschule.entity.hochschule import Hochschule
 
 
 class Student(Base):
@@ -37,7 +36,7 @@ class Student(Base):
     """ID der zugehörigen Hochschule als Fremdschlüssel in der DB-Tabelle."""
 
     # Rückbeziehung zur Hochschule
-    hochschule: Mapped[Hochschule | None] = relationship(back_populates=Hochschule.studenten)
+    hochschule: Mapped[Optional["Hochschule"]] = relationship(back_populates="studenten")
     """Das zugehörige transiente Hochschule-Objekt."""
 
     # __repr__ fuer Entwickler/innen, __str__ fuer User
