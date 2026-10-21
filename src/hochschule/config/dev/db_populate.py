@@ -25,15 +25,15 @@ lazy from importlib.resources.abc import Traversable
 from loguru import logger
 from sqlalchemy import Connection, create_engine, text
 
-from patient.config.config import resources_path
-from patient.config.db import (
+from hochschule.config.config import resources_path
+from hochschule.config.db import (
     db_connect_args,
     db_dialect,
     db_log_statements,
     db_url_admin,
 )
-from patient.config.dev_modus import dev_db_populate
-from patient.repository import engine
+from hochschule.config.dev_modus import dev_db_populate
+from hochschule.repository import engine
 
 __all__ = ["DbPopulateService", "db_populate", "get_db_populate_service"]
 

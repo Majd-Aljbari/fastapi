@@ -6,7 +6,6 @@ import strawberry
 
 from hochschule.service.exceptions import AdresseRequiredError
 lazy from hochschule.entity import Adresse
-
 __all__ = ["AdresseDTO"]
 
 

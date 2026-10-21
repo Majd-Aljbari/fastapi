@@ -18,7 +18,7 @@
 from os import environ
 from typing import Final
 
-from patient.config.config import app_config
+from hochschule.config.config import app_config
 
 __all__ = ["host_binding", "port", "profiling", "reload"]
 

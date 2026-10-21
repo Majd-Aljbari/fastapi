@@ -21,7 +21,7 @@ lazy from importlib.resources.abc import Traversable
 
 from loguru import logger
 
-from patient.config.config import app_config, resources_path
+from hochschule.config.config import app_config, resources_path
 
 __all__ = ["tls_certfile", "tls_keyfile"]
 

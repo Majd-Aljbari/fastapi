@@ -19,13 +19,13 @@ from ssl import PROTOCOL_TLS_SERVER
 
 import uvicorn
 
-from patient.config import (
+from hochschule.config import (
     host_binding,
     port,
     tls_certfile,
     tls_keyfile,
 )
-from patient.fastapi_app import app  # ruff: ignore[unused-import]
+from hochschule.fastapi_app import app  # ruff: ignore[unused-import]
 
 __all__ = ["run"]
 
@@ -41,7 +41,7 @@ def run() -> None:
     #      "zttp" fuer HTTP/1.1 und HTTP/2, "zttp1" fuer HTTP/1.1, "zttp2" fuer HTTP/2
     # interface="auto" (default), "asgi2", "asgi3", "wsgi"
     uvicorn.run(
-        "patient:app",
+        "hochschule:app",
         loop="asyncio",
         http="zttp",
         http2=True,  # NOSONAR
