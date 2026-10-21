@@ -58,11 +58,17 @@ class UserService:
             client_secret_key=keycloak_admin_config.client_secret_key,
             verify=keycloak_admin_config.verify,
         )
-
         disable_warnings(InsecureRequestWarning)
+        self.client_uuid: str | None = None
+        self.rolle_patient: RoleRepresentation | None = None
+
+    def _ensure_connected(self) -> None:
+        """Verbindung zu Keycloak aufbauen, falls noch nicht geschehen."""
+        if self.client_uuid is not None:
+            return
         try:
             # UUID fuer KeycloakAdmin.assign_client_role()
-            self.client_uuid: str = cast(
+            self.client_uuid = cast(
                 "str",
                 self.keycloak_admin.get_client_id(keycloak_admin_config.client_id),
             )
@@ -71,12 +77,11 @@ class UserService:
             roles_patient = [role for role in roles if role["name"] == "patient"]
             # Rolle 'patient' in Keycloak fuer KeycloakAdmin.assign_client_role() und
             # ist ein dict mit Schluesseln "id", "name", "description", ...
-            self.rolle_patient: RoleRepresentation | None = roles_patient[0]
+            self.rolle_patient = roles_patient[0]
             logger.debug("rolle_patient={}", self.rolle_patient)
         except KeycloakConnectionError:
             logger.error("Keine Verbindung zu Keycloak! Ist Keycloak gestartet?")
-            self.client_uuid = "N/A"
-            self.rolle_patient: RoleRepresentation | None = None
+            self.client_uuid = None
 
     def username_exists(self, username: str) -> bool:
         """Abfrage, ob ein Benutzername bereits existiert.
@@ -124,6 +129,7 @@ class UserService:
         """
         logger.debug("user={}", user)
 
+        self._ensure_connected()
         # https://www.keycloak.org/docs-api/latest/rest-api/#_users:
         # POST /admin/realms/{realm}/users
         # https://www.keycloak.org/docs-api/latest/rest-api/index.html#UserRepresentation

@@ -17,10 +17,11 @@
 
 from csv import reader
 from pathlib import Path
+from time import sleep
 from typing import Annotated
 
 from fastapi import Depends
-from keycloak import KeycloakConnectionError
+from keycloak import KeycloakConnectionError, KeycloakPostError
 from loguru import logger
 
 from hochschule.config import csv_config
@@ -49,12 +50,19 @@ class KeycloakPopulateService:
             return
 
         logger.warning(">>> Keycloak wird neu geladen <<<")
-        try:
-            self._remove_users()
-            self._create_users()
-            logger.warning(">>> Keycloak wurde neu geladen <<<")
-        except KeycloakConnectionError:
-            logger.error(">>> Keine Keycloak-Verbindung! Ist Keycloak gestartet? <<<")
+        max_versuche = 5
+        for versuch in range(1, max_versuche + 1):
+            try:
+                self._remove_users()
+                self._create_users()
+                logger.warning(">>> Keycloak wurde neu geladen <<<")
+                return
+            except (KeycloakConnectionError, KeycloakPostError):
+                if versuch == max_versuche:
+                    logger.error(">>> Keine Keycloak-Verbindung! Ist Keycloak gestartet? <<<")
+                    return
+                logger.debug("Keycloak noch nicht bereit (Versuch {}), warte 3s ...", versuch)
+                sleep(3)
 
     def _remove_users(self) -> None:
         self.user_service.remove_all_users()
