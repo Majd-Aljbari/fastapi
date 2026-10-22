@@ -1,28 +1,29 @@
-"""Modul für den Geschäftslogik."""
+"""Modul für die Geschäftslogik."""
 
-from patient.service.adresse_dto import AdresseDTO
-from patient.service.exceptions import (
-    EmailExistsError,
+from hochschule.service.adresse_dto import AdresseDTO
+from hochschule.service.exceptions import (
+    AdresseRequiredError,
     ForbiddenError,
+    NameExistsError,
     NotFoundError,
-    UsernameExistsError,
     VersionOutdatedError,
 )
-from patient.service.mailer import send_mail
-from patient.service.patient_dto import PatientDTO
-from patient.service.patient_service import PatientService
-from patient.service.patient_write_service import PatientWriteService
+from hochschule.service.hochschule_dto import HochschuleDTO
+from hochschule.service.hochschule_service import HochschuleService
+from hochschule.service.hochschule_write_service import HochschuleWriteService
+from hochschule.service.mailer import send_mail
+from hochschule.service.student_dto import StudentDTO
 
-# https://docs.python.org/3/tutorial/modules.html#importing-from-a-package
 __all__ = [
     "AdresseDTO",
-    "EmailExistsError",
+    "AdresseRequiredError",
     "ForbiddenError",
+    "HochschuleDTO",
+    "HochschuleService",
+    "HochschuleWriteService",
+    "NameExistsError",
     "NotFoundError",
-    "PatientDTO",
-    "PatientService",
-    "PatientWriteService",
-    "UsernameExistsError",
+    "StudentDTO",
     "VersionOutdatedError",
     "send_mail",
 ]

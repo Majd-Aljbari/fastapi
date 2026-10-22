@@ -1,141 +1,66 @@
-# Copyright (C) 2023 - present Juergen Zimmermann, Hochschule Karlsruhe
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""GraphQL-Typen und Inputs mit Strawberry."""
 
-"""Schema für GraphQL."""
-
-lazy from datetime import date
-lazy from decimal import Decimal
-
+from datetime import datetime
 import strawberry
 
-lazy from patient.entity import (
-    Facharzt,
-    Familienstand,
-    Geschlecht,
-)
 
-__all__ = [
-    "AdresseInput",
-    "CreatePayload",
-    "PatientInput",
-    "RechnungInput",
-    "Suchparameter",
-]
-
-# SDL (schema definition language):
-# type Patient {
-#     nachname: String!
-# }
-# type Query {
-#     patient(patient_id: ID!): Patient!
-#     patienten(input: Suchparameter): [Patient!]
-# }
-# type Mutation {
-#     create(patient_input: PatientInput!): CreatePayload!
-# }
+@strawberry.type
+class AdresseType:
+    id: int
+    strasse: str
+    hausnummer: str
+    plz: str
+    ort: str
 
 
-@strawberry.input
-class Suchparameter:
-    """Suchparameter für die Suche nach Patienten."""
+@strawberry.type
+class StudentType:
+    id: int
+    matrikelnummer: str
+    vorname: str
+    nachname: str
+    email: str
 
-    nachname: str | None = None
-    """Nachname als Suchkriterium."""
 
-    email: str | None = None
-    """Emailadresse als Suchkriterium."""
+@strawberry.type
+class HochschuleType:
+    id: int
+    version: int
+    name: str
+    homepage: str | None
+    erzeugt: datetime
+    aktualisiert: datetime
+    adresse: AdresseType | None
+    studenten: list[StudentType]
 
 
 @strawberry.input
 class AdresseInput:
-    """Adresse eines neuen Patienten."""
-
+    strasse: str
+    hausnummer: str
     plz: str
-    """Postleitzahl eines neuen Patienten."""
-
     ort: str
-    """Ort eines neuen Patienten."""
 
 
 @strawberry.input
-class RechnungInput:
-    """Rechnung zu einem neuen Patienten."""
-
-    betrag: Decimal
-    """Betrag."""
-
-    waehrung: str
-    """Währung als 3-stellige Zeichenkette."""
+class HochschuleInput:
+    name: str
+    homepage: str | None = None
+    adresse: AdresseInput | None = None
 
 
 @strawberry.input
-class PatientInput:
-    """Daten für einen neuen Patienten."""
-
-    nachname: str
-    """Nachname."""
-
-    email: str
-    """Emailadresse."""
-
-    kategorie: int
-    """Kategorie."""
-
-    has_newsletter: bool
-    """Angabe, ob der Newsletter abonniert ist."""
-
-    geburtsdatum: date
-    """Geburtsdatum."""
-
-    familienstand: Familienstand
-    """Familienstand."""
-
-    homepage: str | None
-    """Optionale Homepage."""
-
-    geschlecht: Geschlecht
-    """Geschlecht."""
-
-    adresse: AdresseInput
-    """Adresse."""
-
-    rechnungen: list[RechnungInput]
-    """Rechnungen."""
-
-    fachaerzte: list[Facharzt]
-    """Fachärzte."""
-
-    username: str
-    """Benutzername."""
+class Suchparameter:
+    name: str | None = None
 
 
 @strawberry.type
 class CreatePayload:
-    """Resultat-Typ, wenn ein neuer Patient angelegt wurde."""
-
     id: int
-    """ID des neu angelegten Patienten"""
 
 
 @strawberry.type
 class LoginResult:
-    """Resultat-Typ, wenn ein Login erfolgreich war."""
-
     token: str
-    """Token des eingeloggten Users."""
-    expiresIn: str  # ruff: ignore[mixed-case-variable-in-class-scope]  # NOSONAR
-    """Gültigkeitsdauer des Tokens."""
+    expiresIn: str
     roles: list[str]
-    """Rollen des eingeloggten Users."""
