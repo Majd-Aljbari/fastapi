@@ -98,17 +98,18 @@ class KeycloakPopulateService:
                     kopfzeile = False
                     continue
 
-                username = row[11]
+                username = row[0]
                 if username == "admin":
                     continue
 
-                email = row[3]
+                vorname = row[1]
                 nachname = row[2]
+                email = row[3]
                 user = User(
                     username=username,
                     email=email,
                     nachname=nachname,
-                    vorname=nachname,
+                    vorname=vorname,
                     roles=[Role.STUDENT],
                     password="p",  # ruff: ignore[hardcoded-password-func-arg] # NOSONAR
                 )

@@ -14,7 +14,7 @@
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 -- https://www.postgresql.org/docs/current/manage-ag-tablespaces.html
-SET default_tablespace = patientspace;
+SET default_tablespace = hochschulespace;
 
 -- https://www.postgresql.org/docs/current/sql-createtable.html
 CREATE TABLE IF NOT EXISTS hochschule (

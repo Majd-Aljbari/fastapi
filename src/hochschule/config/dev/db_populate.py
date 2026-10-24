@@ -114,7 +114,7 @@ class DbPopulateService:
         csv_path: Final = "/init/hochschule/csv"
         # siehe extras/compose/postgres/compose.init.yml
         with self.engine_admin.connect() as connection:
-            connection.execute(text("SET search_path TO patient;"))
+            connection.execute(text("SET search_path TO hochschule;"))
             for tabelle in tabellen:
                 self._load_csv_file(
                     tabelle=tabelle,

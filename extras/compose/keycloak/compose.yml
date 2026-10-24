@@ -37,7 +37,7 @@ services:
     # --features=token-exchange
     # --verbose
     # --help
-    command: ["start", "--hostname-strict=false"]
+    command: ["start", "--hostname-strict=false", "--import-realm"]
     #entrypoint: ["/bin/bash", "-c", "echo 'Container mit keycloak ist gestartet.' && sleep infinity"]
     #entrypoint: ["/opt/keycloak/bin/kc.sh show-config > /dev/null 2>&1 || exit 1"]
 
@@ -55,6 +55,7 @@ services:
     volumes:
       - kc_data:/opt/keycloak/data
       - kc_tls:/opt/keycloak/tls:ro
+      - ./python-realm.json:/opt/keycloak/data/import/python-realm.json:ro
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: tmp
       KC_BOOTSTRAP_ADMIN_PASSWORD: p

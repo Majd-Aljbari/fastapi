@@ -56,12 +56,12 @@ host = "localhost"
 port = 8843
 #realm = "python"
 #client-id = "python-client"
-client-secret = "plF5Sme7bgod3gtcKn0OAIRxMiELrOjE"
+client-secret = "acme12345"
 #client-secret = "YAVf1nIZFL5R5zRgqOcyUbMK0cVCYUny"
 #client-secret = "SBaV6gifbGGpsmv58L4y1xjJbxBp7hI7iCinnp0MZfDhsFGxMbhdbOjUeRkQOmFBqGILii6Ing2VzpHgMH46j3"
 # admin = "admin"
 admin-password = "p"
-csv = "extras/compose/postgres/init/hochschule/csv/hochschule.csv"
+csv = "extras/compose/postgres/init/hochschule/csv/user.csv"
 
 [graphql]
 # locust: auskommentieren
