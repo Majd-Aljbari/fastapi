@@ -1,0 +1,63 @@
+info:
+  name: Suche name, adresse von Hochschule mit ID 1000
+  type: graphql
+  seq: 1
+
+graphql:
+  method: POST
+  url: "{{graphqlUrl}}"
+  headers:
+    - name: ""
+      value: ""
+      disabled: true
+  body:
+    query: |-
+      query ($hochschuleId: ID! = "1000") {
+        hochschule(hochschuleId: $hochschuleId) {
+          id
+          version
+          name
+          homepage
+          adresse {
+            strasse
+            hausnummer
+            plz
+            ort
+          }
+          studenten {
+            matrikelnummer
+            vorname
+            nachname
+            email
+          }
+        }
+      }
+    variables: |-
+      {
+        "hochschuleId": "1000"
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.headers['content-type']
+      operator: eq
+      value: application/json
+    - expression: res.body.data.hochschule
+      operator: isJson
+    - expression: res.body.data.hochschule.version
+      operator: gte
+      value: "0"
+    - expression: res.body.data.hochschule.name
+      operator: isString
+    - expression: res.body.data.hochschule.name
+      operator: isNotEmpty
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

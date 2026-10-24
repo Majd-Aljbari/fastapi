@@ -1,0 +1,53 @@
+info:
+  name: Neue Hochschule
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{restUrl}}"
+  headers:
+    - name: ""
+      value: ""
+      disabled: true
+  body:
+    type: json
+    data: |-
+      {
+          "name": "Hochschule Teststadt",
+          "homepage": "https://www.hs-teststadt.de",
+          "adresse": {
+              "strasse": "Teststraße",
+              "hausnummer": "1",
+              "plz": "99999",
+              "ort": "Teststadt"
+          },
+          "studenten": [
+              {
+                  "matrikelnummer": "1234567",
+                  "vorname": "Max",
+                  "nachname": "Mustermann",
+                  "email": "max.mustermann@hs-teststadt.de"
+              }
+          ]
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "201"
+    - expression: res.headers.location
+      operator: matches
+      value: \/rest\/[1-9]\d*$
+    - expression: res.body
+      operator: isString
+    - expression: res.body
+      operator: isEmpty
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

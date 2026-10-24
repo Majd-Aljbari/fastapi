@@ -1,0 +1,31 @@
+info:
+  name: Login mit falschem Passwort
+  type: graphql
+  seq: 2
+
+graphql:
+  method: POST
+  url: "{{graphqlUrl}}"
+  body:
+    query: |-
+      mutation {
+        login(username: "admin", password: "FALSCH") {
+          token
+          expires_in
+          roles
+        }
+      }
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.errors
+      operator: isArray
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

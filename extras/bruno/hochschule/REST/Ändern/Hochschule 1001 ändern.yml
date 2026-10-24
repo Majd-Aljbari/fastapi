@@ -1,0 +1,39 @@
+info:
+  name: Hochschule 1001 ändern
+  type: http
+  seq: 1
+
+http:
+  method: PUT
+  url: "{{restUrl}}/:id"
+  headers:
+    - name: If-Match
+      value: '"0"'
+  params:
+    - name: id
+      value: "1001"
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+          "name": "KIT Karlsruhe",
+          "homepage": "https://www.kit.edu"
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "204"
+    - expression: res.body
+      operator: isString
+    - expression: res.body
+      operator: isEmpty
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

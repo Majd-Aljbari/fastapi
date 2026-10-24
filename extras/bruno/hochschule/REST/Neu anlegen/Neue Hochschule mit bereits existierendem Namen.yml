@@ -1,0 +1,33 @@
+info:
+  name: Neue Hochschule mit bereits existierendem Namen
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{restUrl}}"
+  body:
+    type: json
+    data: |-
+      {
+          "name": "Hochschule Karlsruhe",
+          "adresse": {
+              "strasse": "Moltkestraße",
+              "hausnummer": "30",
+              "plz": "76133",
+              "ort": "Karlsruhe"
+          }
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "422"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

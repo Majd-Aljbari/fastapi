@@ -1,0 +1,27 @@
+info:
+  name: Token mit falschem Passwort
+  type: http
+  seq: 2
+
+http:
+  method: QUERY
+  url: "{{tokenUrl}}"
+  body:
+    type: json
+    data: |-
+      {
+          "username": "admin",
+          "password": "FALSCH"
+      }
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "401"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
