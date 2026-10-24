@@ -21,7 +21,7 @@ from time import sleep
 from typing import Annotated
 
 from fastapi import Depends
-from keycloak import KeycloakConnectionError, KeycloakPostError
+from keycloak import KeycloakAuthenticationError, KeycloakConnectionError, KeycloakPostError
 from loguru import logger
 
 from hochschule.config import csv_config
@@ -56,6 +56,9 @@ class KeycloakPopulateService:
                 self._remove_users()
                 self._create_users()
                 logger.warning(">>> Keycloak wurde neu geladen <<<")
+                return
+            except KeycloakAuthenticationError:
+                logger.error(">>> Keycloak: Ungültige Client-Credentials! Bitte app.toml prüfen <<<")
                 return
             except (KeycloakConnectionError, KeycloakPostError):
                 if versuch == max_versuche:
@@ -95,7 +98,7 @@ class KeycloakPopulateService:
                     email=email,
                     nachname=nachname,
                     vorname=nachname,
-                    roles=[Role.PATIENT],
+                    roles=[Role.STUDENT],
                     password="p",  # ruff: ignore[hardcoded-password-func-arg] # NOSONAR
                 )
                 self.user_service.create_user(user=user)

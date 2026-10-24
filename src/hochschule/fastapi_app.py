@@ -61,20 +61,18 @@ from hochschule.security import (
     set_response_headers,
 )
 from hochschule.service import (
-    EmailExistsError,
     ForbiddenError,
+    NameExistsError,
     NotFoundError,
-    UsernameExistsError,
     VersionOutdatedError,
 )
 
 __all__ = [
     "authorization_error_handler",
-    "email_exists_error_handler",
     "forbidden_error_handler",
     "login_error_handler",
+    "name_exists_error_handler",
     "not_found_error_handler",
-    "username_exists_error_handler",
     "version_outdated_error_handler",
 ]
 
@@ -269,29 +267,11 @@ def login_error_handler(_request: Request, err: LoginError) -> Response:
     ).to_response()
 
 
-@app.exception_handler(EmailExistsError)
-def email_exists_error_handler(_request: Request, err: EmailExistsError) -> Response:
-    """Exception-Handling für EmailExistsError.
+@app.exception_handler(NameExistsError)
+def name_exists_error_handler(_request: Request, err: NameExistsError) -> Response:
+    """Exception-Handling für NameExistsError.
 
-    :param err: Exception, falls die Emailadresse des neuen oder zu ändernden Patienten
-        bereits existiert
-    :return: Response mit Statuscode 422
-    :rtype: Response
-    """
-    return ProblemDetails.create(
-        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-        detail=str(err),
-    ).to_response()
-
-
-@app.exception_handler(UsernameExistsError)
-def username_exists_error_handler(
-    _request: Request,
-    err: UsernameExistsError,
-) -> Response:
-    """Exception-Handling für UsernameExistsError.
-
-    :param err: Exception, falls der Username für den neuen Patienten bereits existiert
+    :param err: Exception, falls der Name der Hochschule bereits existiert
     :return: Response mit Statuscode 422
     :rtype: Response
     """
