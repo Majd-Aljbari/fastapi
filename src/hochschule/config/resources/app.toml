@@ -61,7 +61,7 @@ client-secret = "plF5Sme7bgod3gtcKn0OAIRxMiELrOjE"
 #client-secret = "SBaV6gifbGGpsmv58L4y1xjJbxBp7hI7iCinnp0MZfDhsFGxMbhdbOjUeRkQOmFBqGILii6Ing2VzpHgMH46j3"
 # admin = "admin"
 admin-password = "p"
-csv = "extras/compose/postgres/init/patient/csv/patient.csv"
+csv = "extras/compose/postgres/init/hochschule/csv/hochschule.csv"
 
 [graphql]
 # locust: auskommentieren
