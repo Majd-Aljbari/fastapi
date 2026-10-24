@@ -1,31 +1,16 @@
-# Copyright (C) 2026 - present Juergen Zimmermann, Hochschule Karlsruhe
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 """Repository fuer persistente Hochschuldaten."""
 
+from collections.abc import Sequence
 from typing import Final
-lazy from collections.abc import Sequence
 
 from loguru import logger
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from hochschule.entity import Hochschule
+from hochschule.repository.hochschule_suchparameter import HochschuleSuchparameter
+from hochschule.repository.pageable import Pageable
 from hochschule.repository.slice import Slice
-lazy from hochschule.repository.pageable import Pageable
-lazy from hochschule.repository.hochschule_suchparameter import HochschuleSuchparameter
 
 __all__ = ["HochschuleRepository"]
 
@@ -33,8 +18,10 @@ __all__ = ["HochschuleRepository"]
 class HochschuleRepository:
     """Repository-Klasse mit CRUD-Methoden für die Entity-Klasse Hochschule."""
 
-    def find_by_id(self, hochschule_id: int | None, session: Session) -> Hochschule | None:
-        """Suche mit der Hochschul-ID.
+    def find_by_id(
+        self, hochschule_id: int | None, session: Session
+    ) -> Hochschule | None:
+        """Suche mit der Hochschule-ID.
 
         :param hochschule_id: ID der gesuchten Hochschule
         :param session: Session für SQLAlchemy
@@ -50,7 +37,7 @@ class HochschuleRepository:
             select(Hochschule)
             .options(
                 joinedload(Hochschule.adresse),
-                joinedload(Hochschule.studenten),
+                selectinload(Hochschule.studenten),
             )
             .where(Hochschule.id == hochschule_id)
         )
@@ -97,23 +84,24 @@ class HochschuleRepository:
                 select(Hochschule)
                 .options(
                     joinedload(Hochschule.adresse),
-                    joinedload(Hochschule.studenten),
+                    selectinload(Hochschule.studenten),
                 )
                 .limit(pageable.size)
                 .offset(offset)
             )
             if pageable.size != 0
             else (
-                select(Hochschule)
-                .options(
+                select(Hochschule).options(
                     joinedload(Hochschule.adresse),
-                    joinedload(Hochschule.studenten),
+                    selectinload(Hochschule.studenten),
                 )
             )
         )
-        hochschulen: Final = (session.scalars(statement)).unique().all()
+        hochschulen: Final = (session.scalars(statement)).all()
         anzahl: Final = self._count_all_rows(session)
-        hochschule_slice: Final = Slice(content=tuple(hochschulen), total_elements=anzahl)
+        hochschule_slice: Final = Slice(
+            content=tuple(hochschulen), total_elements=anzahl
+        )
         logger.debug("hochschule_slice={}", hochschule_slice)
         return hochschule_slice
 
@@ -135,7 +123,7 @@ class HochschuleRepository:
                 select(Hochschule)
                 .options(
                     joinedload(Hochschule.adresse),
-                    joinedload(Hochschule.studenten),
+                    selectinload(Hochschule.studenten),
                 )
                 .filter(Hochschule.name.ilike(f"%{teil}%"))
                 .limit(pageable.size)
@@ -146,14 +134,16 @@ class HochschuleRepository:
                 select(Hochschule)
                 .options(
                     joinedload(Hochschule.adresse),
-                    joinedload(Hochschule.studenten),
+                    selectinload(Hochschule.studenten),
                 )
                 .filter(Hochschule.name.ilike(f"%{teil}%"))
             )
         )
-        hochschulen: Final = session.scalars(statement).unique().all()
+        hochschulen: Final = session.scalars(statement).all()
         anzahl: Final = self._count_rows_name(teil, session)
-        hochschule_slice: Final = Slice(content=tuple(hochschulen), total_elements=anzahl)
+        hochschule_slice: Final = Slice(
+            content=tuple(hochschulen), total_elements=anzahl
+        )
         logger.debug("{}", hochschule_slice)
         return hochschule_slice
 
@@ -166,25 +156,41 @@ class HochschuleRepository:
         count: Final = session.execute(statement).scalar()
         return count if count is not None else 0
 
-    def find_namen(self, teil: str, session: Session) -> Sequence[str]:
-        """Suche Namen zu einem Teilstring.
+    def exists_name(self, name: str, session: Session) -> bool:
+        """Abfrage, ob es den Hochschulnamen bereits gibt.
 
-        :param teil: Teilstring zu den gesuchten Namen
+        :param name: Name der Hochschule
         :param session: Session für SQLAlchemy
-        :return: Liste der gefundenen Namen oder eine leere Liste
-        :rtype: Sequence[str]
+        :return: True, falls es den Namen bereits gibt, False sonst
+        :rtype: bool
         """
-        logger.debug("teil={}", teil)
+        logger.debug("name={}", name)
 
-        statement: Final = (
-            select(Hochschule.name)
-            .filter(Hochschule.name.ilike(f"%{teil}%"))
-            .distinct()
-        )
-        namen: Final = (session.scalars(statement)).all()
+        statement: Final = select(func.count()).where(Hochschule.name == name)
+        anzahl: Final = session.scalar(statement)
+        logger.debug("anzahl={}", anzahl)
+        return anzahl is not None and anzahl > 0
 
-        logger.debug("namen={}", namen)
-        return namen
+    def exists_name_other_id(
+        self,
+        name: str,
+        hochschule_id: int,
+        session: Session,
+    ) -> bool:
+        """Abfrage, ob es den Hochschulnamen bei einer anderen Hochschule-ID bereits gibt.
+
+        :param name: Name der Hochschule
+        :param hochschule_id: eigene Hochschule-ID
+        :param session: Session für SQLAlchemy
+        :return: True, falls es den Namen bereits gibt, False sonst
+        :rtype: bool
+        """
+        logger.debug("name={}", name)
+
+        statement: Final = select(Hochschule.id).where(Hochschule.name == name)
+        id_db: Final = session.scalar(statement)
+        logger.debug("id_db={}", id_db)
+        return id_db is not None and id_db != hochschule_id
 
     def create(self, hochschule: Hochschule, session: Session) -> Hochschule:
         """Speichere eine neue Hochschule ab.
@@ -210,13 +216,15 @@ class HochschuleRepository:
 
         :param hochschule: Die neuen Hochschuldaten
         :param session: Session für SQLAlchemy
-        :return: Die aktualisierte Hochschule oder None
+        :return: Die aktualisierte Hochschule oder None, falls kein Eintrag mit der ID existiert
         :rtype: Hochschule | None
         """
         logger.debug("{}", hochschule)
 
         if (
-            hochschule_db := self.find_by_id(hochschule_id=hochschule.id, session=session)
+            hochschule_db := self.find_by_id(
+                hochschule_id=hochschule.id, session=session
+            )
         ) is None:
             return None
 
@@ -231,7 +239,31 @@ class HochschuleRepository:
         """
         logger.debug("hochschule_id={}", hochschule_id)
 
-        if (hochschule := self.find_by_id(hochschule_id=hochschule_id, session=session)) is None:
+        if (
+            hochschule := self.find_by_id(
+                hochschule_id=hochschule_id, session=session
+            )
+        ) is None:
             return
         session.delete(hochschule)
         logger.debug("ok")
+
+    def find_namen(self, teil: str, session: Session) -> Sequence[str]:
+        """Suche Hochschulnamen zu einem Teilstring.
+
+        :param teil: Teilstring zu den gesuchten Namen
+        :param session: Session für SQLAlchemy
+        :return: Liste der gefundenen Namen oder eine leere Liste
+        :rtype: Sequence[str]
+        """
+        logger.debug("teil={}", teil)
+
+        statement: Final = (
+            select(Hochschule.name)
+            .filter(Hochschule.name.ilike(f"%{teil}%"))
+            .distinct()
+        )
+        namen: Final = (session.scalars(statement)).all()
+
+        logger.debug("namen={}", namen)
+        return namen

@@ -1,83 +1,47 @@
-# Copyright (C) 2023 - present Juergen Zimmermann, Hochschule Karlsruhe
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 """Exceptions in der Geschäftslogik."""
 
-lazy from hochschule.repository.patient_suchparameter import PatientSuchparameter
+lazy from hochschule.repository.hochschule_suchparameter import HochschuleSuchparameter
 
 __all__ = [
     "AdresseRequiredError",
-    "EmailExistsError",
     "ForbiddenError",
+    "NameExistsError",
     "NotFoundError",
-    "UsernameExistsError",
     "VersionOutdatedError",
 ]
 
 
-class EmailExistsError(Exception):
-    """Exception, falls die Emailadresse bereits existiert."""
+class NameExistsError(Exception):
+    """Exception, falls der Name der Hochschule bereits existiert."""
 
-    def __init__(self, email: str) -> None:
-        """Initialisierung von EmailExistsError mit der Emailadresse.
+    def __init__(self, name: str) -> None:
+        """Initialisierung mit dem Hochschulnamen.
 
-        :param email: Bereits existierende Emailadresse
+        :param name: Bereits existierender Hochschulname
         """
-        super().__init__(f"Existierende Email: {email}")
-        self.email = email
-
-
-class EmptyUsernameError(ValueError):
-    """Exception, falls der Benutzername leer ist."""
-
-    def __init__(self) -> None:
-        """Initialisierung von EmptyUsernameError."""
-        super().__init__("username ist None oder leer")
-
-
-class UsernameExistsError(Exception):
-    """Exception, falls der Benutzername bereits existiert."""
-
-    def __init__(self, username: str | None) -> None:
-        """Initialisierung von UsernameExistsError mit dem Benutzernamen.
-
-        :param username: Bereits existierender Benutzername
-        """
-        super().__init__(f"Existierender Benutzername: {username}")
-        self.username = username
+        super().__init__(f"Existierender Hochschulname: {name}")
+        self.name = name
 
 
 class ForbiddenError(Exception):
-    """Exception, falls es der Zugriff nicht erlaubt ist."""
+    """Exception, falls der Zugriff nicht erlaubt ist."""
 
 
 class NotFoundError(Exception):
-    """Exception, falls kein Patient gefunden wurde."""
+    """Exception, falls keine Hochschule gefunden wurde."""
 
     def __init__(
         self,
-        patient_id: int | None = None,
-        suchparameter: PatientSuchparameter | None = None,
+        hochschule_id: int | None = None,
+        suchparameter: HochschuleSuchparameter | None = None,
     ) -> None:
         """Initialisierung von NotFoundError mit ID und Suchparameter.
 
-        :param patient_id: Patient-ID, zu der nichts gefunden wurde
+        :param hochschule_id: Hochschule-ID, zu der nichts gefunden wurde
         :param suchparameter: Suchparameter, zu denen nichts gefunden wurde
         """
         super().__init__("Not Found")
-        self.patient_id = patient_id
+        self.hochschule_id = hochschule_id
         self.suchparameter = suchparameter
 
 

@@ -1,24 +1,9 @@
-# Copyright (C) 2026 - present Juergen Zimmermann, Hochschule Karlsruhe
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 """Geschäftslogik zum Lesen von Hochschuldaten."""
 
+from collections.abc import Sequence
 from datetime import datetime
 from typing import Final
 from zoneinfo import ZoneInfo
-lazy from collections.abc import Sequence
 
 from loguru import logger
 from openpyxl import Workbook
@@ -31,39 +16,46 @@ from hochschule.repository import (
     Session,
     Slice,
 )
-from hochschule.service.exceptions import NotFoundError
+from hochschule.security import Role, User
+from hochschule.service.exceptions import ForbiddenError, NotFoundError
 from hochschule.service.hochschule_dto import HochschuleDTO
 
 __all__ = ["HochschuleService"]
 
 
 class HochschuleService:
-    """Service-Klasse mit Geschäftslogik für Hochschule."""
+    """Service-Klasse mit Geschäftslogik für Lese-Operationen bei Hochschule."""
 
     def __init__(self, repo: HochschuleRepository) -> None:
         """Konstruktor mit abhängigem HochschuleRepository."""
         self.repo: HochschuleRepository = repo
 
-    def find_by_id(self, hochschule_id: int) -> HochschuleDTO:
-        """Suche mit der Hochschul-ID.
+    def find_by_id(self, hochschule_id: int, user: User) -> HochschuleDTO:
+        """Suche mit der Hochschule-ID.
 
         :param hochschule_id: ID für die Suche
+        :param user: User aus dem Authentifizierungs-Token
         :return: Die gefundene Hochschule
         :rtype: HochschuleDTO
         :raises NotFoundError: Falls keine Hochschule gefunden wurde
+        :raises ForbiddenError: Falls die Hochschuldaten nicht gelesen werden dürfen
         """
-        logger.debug("hochschule_id={}", hochschule_id)
+        logger.debug("hochschule_id={}, user={}", hochschule_id, user)
 
         with Session() as session:
+            user_is_admin: Final = Role.ADMIN in user.roles
+
             if (
                 hochschule := self.repo.find_by_id(
-                    session=session,
-                    hochschule_id=hochschule_id,
+                    session=session, hochschule_id=hochschule_id
                 )
             ) is None:
-                message: Final = f"Keine Hochschule mit der ID {hochschule_id}"
-                logger.debug("NotFoundError: {}", message)
-                raise NotFoundError(patient_id=hochschule_id)
+                if user_is_admin:
+                    message: Final = f"Keine Hochschule mit der ID {hochschule_id}"
+                    logger.debug("NotFoundError: {}", message)
+                    raise NotFoundError(hochschule_id=hochschule_id)
+                logger.debug("nicht admin")
+                raise ForbiddenError
 
             hochschule_dto: Final = HochschuleDTO.from_hochschule(hochschule)
             session.commit()
@@ -79,7 +71,7 @@ class HochschuleService:
         """Suche mit Suchparameter.
 
         :param suchparameter: Suchparameter oder None
-        :param pageable: Anzahl Datensätze und Seitennummer
+        :param pageable: Pagination-Informationen
         :return: Slice der gefundenen Hochschulen
         :rtype: Slice[HochschuleDTO]
         :raises NotFoundError: Falls keine Hochschulen gefunden wurden
@@ -95,12 +87,14 @@ class HochschuleService:
                 raise NotFoundError(suchparameter=suchparameter)
 
             hochschulen_dto: Final = tuple(
-                HochschuleDTO.from_hochschule(h) for h in hochschule_slice.content
+                HochschuleDTO.from_hochschule(hochschule)
+                for hochschule in hochschule_slice.content
             )
             session.commit()
 
         if excel_enabled:
             self._create_excelsheet(hochschulen_dto)
+
         hochschulen_dto_slice = Slice(
             content=hochschulen_dto,
             total_elements=hochschule_slice.total_elements,
@@ -109,10 +103,10 @@ class HochschuleService:
         return hochschulen_dto_slice
 
     def find_namen(self, teil: str) -> Sequence[str]:
-        """Suche Namen zu einem Teilstring.
+        """Suche Hochschulnamen zu einem Teilstring.
 
         :param teil: Teilstring der gesuchten Namen
-        :return: Liste der gefundenen Namen oder eine leere Liste
+        :return: Liste der gefundenen Namen
         :rtype: Sequence[str]
         :raises NotFoundError: Falls keine Namen gefunden wurden
         """
@@ -136,12 +130,11 @@ class HochschuleService:
         if worksheet is None:
             return
 
-        worksheet.append(["Name", "Homepage"])
-        for hochschule in hochschulen:
-            worksheet.append((
-                hochschule.name,
-                hochschule.homepage or "N/A",
-            ))
+        worksheet.append(["ID", "Name", "Homepage", "Ort"])
+        for hs in hochschulen:
+            ort = hs.adresse.ort if hs.adresse is not None else "N/A"
+            homepage = hs.homepage if hs.homepage is not None else "N/A"
+            worksheet.append((hs.id, hs.name, homepage, ort))
 
         timestamp: Final = datetime.now(tz=ZoneInfo("Europe/Berlin")).strftime(
             format="%Y-%m-%d_%H%M%S",

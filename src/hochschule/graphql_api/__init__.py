@@ -3,8 +3,7 @@
 from hochschule.graphql_api.graphql_types import (
     AdresseInput,
     CreatePayload,
-    PatientInput,
-    RechnungInput,
+    HochschuleInput,
     Suchparameter,
 )
 from hochschule.graphql_api.schema import Mutation, Query, graphql_router
@@ -12,10 +11,9 @@ from hochschule.graphql_api.schema import Mutation, Query, graphql_router
 __all__ = [
     "AdresseInput",
     "CreatePayload",
+    "HochschuleInput",
     "Mutation",
-    "PatientInput",
     "Query",
-    "RechnungInput",
     "Suchparameter",
     "graphql_router",
 ]

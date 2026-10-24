@@ -1,50 +1,40 @@
-# Copyright (C) 2025 - present Juergen Zimmermann, Hochschule Karlsruhe
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 """Factory-Funktionen für Dependency Injection."""
 
 from typing import Annotated
 
 from fastapi import Depends
 
-from hochschule.repository.patient_repository import PatientRepository
+from hochschule.repository.hochschule_repository import HochschuleRepository
 from hochschule.security.dependencies import get_user_service
-from hochschule.service.patient_service import PatientService
-from hochschule.service.patient_write_service import PatientWriteService
-lazy from hochschule.security.user_service import UserService
+from hochschule.security.user_service import UserService
+from hochschule.service.hochschule_service import HochschuleService
+from hochschule.service.hochschule_write_service import HochschuleWriteService
 
 
-def get_repository() -> PatientRepository:
-    """Factory-Funktion für PatientRepository.
+def get_repository() -> HochschuleRepository:
+    """Factory-Funktion für HochschuleRepository.
 
     :return: Das Repository
-    :rtype: PatientRepository
+    :rtype: HochschuleRepository
     """
-    return PatientRepository()
+    return HochschuleRepository()
 
 
 def get_service(
-    repo: Annotated[PatientRepository, Depends(get_repository)],
-) -> PatientService:
-    """Factory-Funktion für PatientService."""
-    return PatientService(repo=repo)
+    repo: Annotated[HochschuleRepository, Depends(get_repository)],
+) -> HochschuleService:
+    """Factory-Funktion für HochschuleService."""
+    return HochschuleService(repo=repo)
 
 
+# def get_write_service(
+#     repo: Annotated[HochschuleRepository, Depends(get_repository)],
+#     user_service: Annotated[UserService, Depends(get_user_service)],
+# ) -> HochschuleWriteService:
+#     """Factory-Funktion für HochschuleWriteService."""
+#     return HochschuleWriteService(repo=repo, user_service=user_service)
 def get_write_service(
-    repo: Annotated[PatientRepository, Depends(get_repository)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
-) -> PatientWriteService:
-    """Factory-Funktion für PatientWriteService."""
-    return PatientWriteService(repo=repo, user_service=user_service)
+    repo: Annotated[HochschuleRepository, Depends(get_repository)],
+) -> HochschuleWriteService:
+    """Factory-Funktion für HochschuleWriteService."""
+    return HochschuleWriteService(repo=repo)

@@ -1,34 +1,23 @@
-# Copyright (C) 2026 - present Juergen Zimmermann, Hochschule Karlsruhe
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 """Geschäftslogik zum Schreiben von Hochschuldaten."""
 
 from typing import Final
 
 from loguru import logger
 
+from hochschule.entity import Hochschule
 from hochschule.repository import HochschuleRepository, Session
-from hochschule.service.exceptions import NotFoundError, VersionOutdatedError
+from hochschule.service.exceptions import (
+    NameExistsError,
+    NotFoundError,
+    VersionOutdatedError,
+)
 from hochschule.service.hochschule_dto import HochschuleDTO
-lazy from hochschule.entity import Hochschule
 
 __all__ = ["HochschuleWriteService"]
 
 
 class HochschuleWriteService:
-    """Service-Klasse mit Geschäftslogik für Hochschule."""
+    """Service-Klasse mit Geschäftslogik für Schreib-Operationen bei Hochschule."""
 
     def __init__(self, repo: HochschuleRepository) -> None:
         """Konstruktor mit abhängigem HochschuleRepository."""
@@ -40,6 +29,7 @@ class HochschuleWriteService:
         :param hochschule: Die neue Hochschule ohne ID
         :return: Die neu angelegte Hochschule mit generierter ID
         :rtype: HochschuleDTO
+        :raises NameExistsError: Falls der Hochschulname bereits existiert
         """
         logger.debug(
             "hochschule={}, adresse={}, studenten={}",
@@ -48,15 +38,24 @@ class HochschuleWriteService:
             hochschule.studenten,
         )
 
+        name: Final = hochschule.name
+
         with Session() as session:
-            hochschule_db: Final = self.repo.create(hochschule=hochschule, session=session)
+            if self.repo.exists_name(name=name, session=session):
+                raise NameExistsError(name=name)
+
+            hochschule_db: Final = self.repo.create(
+                hochschule=hochschule, session=session
+            )
             hochschule_dto: Final = HochschuleDTO.from_hochschule(hochschule_db)
             session.commit()
 
         logger.debug("hochschule_dto={}", hochschule_dto)
         return hochschule_dto
 
-    def update(self, hochschule: Hochschule, hochschule_id: int, version: int) -> HochschuleDTO:
+    def update(
+        self, hochschule: Hochschule, hochschule_id: int, version: int
+    ) -> HochschuleDTO:
         """Daten einer Hochschule ändern.
 
         :param hochschule: Die neuen Daten
@@ -65,9 +64,12 @@ class HochschuleWriteService:
         :return: Die aktualisierte Hochschule
         :rtype: HochschuleDTO
         :raises NotFoundError: Falls die zu aktualisierende Hochschule nicht existiert
-        :raises VersionOutdatedError: Falls die Versionsnummer nicht aktuell ist
+        :raises VersionOutdatedError: Falls die Versionsnummer veraltet ist
+        :raises NameExistsError: Falls der neue Name bereits vergeben ist
         """
-        logger.debug("hochschule_id={}, version={}, {}", hochschule_id, version, hochschule)
+        logger.debug(
+            "hochschule_id={}, version={}, {}", hochschule_id, version, hochschule
+        )
 
         with Session() as session:
             if (
@@ -77,14 +79,23 @@ class HochschuleWriteService:
                 )
             ) is None:
                 raise NotFoundError(hochschule_id)
+
             if hochschule_db.version > version:
                 raise VersionOutdatedError(version)
 
+            name: Final = hochschule.name
+            if name != hochschule_db.name and self.repo.exists_name_other_id(
+                hochschule_id=hochschule_id,
+                name=name,
+                session=session,
+            ):
+                raise NameExistsError(name)
+
             hochschule_db.set(hochschule)
+
             if (
                 hochschule_updated := self.repo.update(
-                    hochschule=hochschule_db,
-                    session=session,
+                    hochschule=hochschule_db, session=session
                 )
             ) is None:
                 raise NotFoundError(hochschule_id)
