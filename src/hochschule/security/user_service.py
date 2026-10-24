@@ -146,6 +146,9 @@ class UserService:
         )
         logger.debug("user_id={}", user_id)
 
+        if self.client_uuid is None:
+            return user_id
+
         self.keycloak_admin.assign_client_role(
             user_id=user_id,
             client_id=self.client_uuid,
