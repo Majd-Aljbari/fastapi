@@ -1,11 +1,14 @@
 """Entity-Klasse für die Adresse."""
 
-from typing import Optional, override
+from typing import TYPE_CHECKING, override
 
 from sqlalchemy import ForeignKey, Identity
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from hochschule.entity.base import Base
+
+if TYPE_CHECKING:
+    from hochschule.entity.hochschule import Hochschule
 
 
 class Adresse(Base):
@@ -32,11 +35,13 @@ class Adresse(Base):
     """Die generierte ID gemäß der zugehörigen IDENTITY-Spalte."""
 
     # Foreign Key für die 1:1-Beziehung zu Hochschule (unique=True erzwingt 1:1)
-    hochschule_id: Mapped[int | None] = mapped_column(ForeignKey("hochschule.id"), unique=True)
+    hochschule_id: Mapped[int | None] = mapped_column(
+        ForeignKey("hochschule.id"), unique=True
+    )
     """ID der zugehörigen Hochschule als Fremdschlüssel in der DB-Tabelle."""
 
     # Rückbeziehung zur Hochschule
-    hochschule: Mapped[Optional["Hochschule"]] = relationship(back_populates="adresse")
+    hochschule: Mapped[Hochschule | None] = relationship(back_populates="adresse")
     """Das zugehörige transiente Hochschule-Objekt."""
 
     # __repr__ fuer Entwickler/innen, __str__ fuer User

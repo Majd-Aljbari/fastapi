@@ -10,7 +10,7 @@ from uuid import uuid4
 from loguru import logger
 
 from hochschule.config import mail_config, receiver, sender
-from hochschule.service.hochschule_dto import HochschuleDTO
+lazy from hochschule.service.hochschule_dto import HochschuleDTO
 
 __all__ = ["send_mail"]
 

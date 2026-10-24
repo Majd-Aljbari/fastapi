@@ -21,7 +21,7 @@ class StudentDTO:
     email: str
 
     @classmethod
-    def from_student(cls, student: Student) -> "StudentDTO":
+    def from_student(cls, student: Student) -> StudentDTO:
         """Initialisierung von StudentDTO durch ein Entity-Objekt von Student.
 
         :param student: Student-Objekt mit Decorators für SQLAlchemy

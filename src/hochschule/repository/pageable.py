@@ -22,7 +22,7 @@ class Pageable:
     """Seitennummer."""
 
     @classmethod
-    def create(cls, number: str | None = None, size: str | None = None) -> "Pageable":
+    def create(cls, number: str | None = None, size: str | None = None) -> Pageable:
         """Pageable-Objekt aus Eingabedaten erstellen.
 
         :param number: Seitennummer als String.

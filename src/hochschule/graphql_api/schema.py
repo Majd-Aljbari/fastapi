@@ -1,15 +1,15 @@
 """Schema für GraphQL durch Strawberry."""
 
-from collections.abc import Sequence
 from dataclasses import asdict
 from typing import Final
+lazy from collections.abc import Sequence
 
 import strawberry
 from fastapi import Request
 from loguru import logger
 from strawberry.extensions import PydanticErrorExtension
 from strawberry.fastapi import GraphQLRouter
-from strawberry.types import Info
+lazy from strawberry.types import Info
 
 from hochschule.config.graphql import graphql_ide
 from hochschule.graphql_api.graphql_types import (
@@ -24,12 +24,12 @@ from hochschule.repository import (
     Pageable,
 )
 from hochschule.router.hochschule_model import HochschuleModel
-from hochschule.security import Role, TokenService, UserService
+from hochschule.security import Role, TokenService
 from hochschule.service import (
-    NotFoundError,
     HochschuleDTO,
     HochschuleService,
     HochschuleWriteService,
+    NotFoundError,
 )
 
 __all__ = ["graphql_router"]
@@ -49,7 +49,9 @@ class Query:
     """Queries, um Hochschuldaten zu lesen."""
 
     @strawberry.field
-    def hochschule(self, hochschule_id: strawberry.ID, info: Info) -> HochschuleDTO | None:
+    def hochschule(
+        self, hochschule_id: strawberry.ID, info: Info
+    ) -> HochschuleDTO | None:
         """Daten zu einer Hochschule lesen.
 
         :param hochschule_id: ID der gesuchten Hochschule
@@ -127,7 +129,9 @@ class Mutation:
         """
         logger.debug("hochschule_input={}", hochschule_input)
 
-        hochschule_model: Final = HochschuleModel.model_validate(asdict(hochschule_input))
+        hochschule_model: Final = HochschuleModel.model_validate(
+            asdict(hochschule_input)
+        )
 
         hochschule_dto: Final = _write_service.create(
             hochschule=hochschule_model.to_hochschule()
@@ -151,7 +155,7 @@ class Mutation:
         token = token_mapping["access_token"]
         user = _token_service.get_user_from_token(token)
         roles: Final = [role.value for role in user.roles]
-        return LoginResult(token=token, expiresIn="1d", roles=roles)
+        return LoginResult(token=token, expires_in="1d", roles=roles)
 
 
 schema: Final = strawberry.Schema(

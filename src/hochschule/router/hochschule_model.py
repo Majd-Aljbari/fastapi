@@ -3,12 +3,12 @@
 from typing import Final, override
 
 from loguru import logger
-from pydantic import ConfigDict
+from pydantic import ConfigDict, Field
 
-from hochschule.entity import Hochschule
-from hochschule.router.adresse_model import AdresseModel
 from hochschule.router.hochschule_update_model import HochschuleUpdateModel
-from hochschule.router.student_model import StudentModel
+lazy from hochschule.entity import Hochschule
+lazy from hochschule.router.adresse_model import AdresseModel
+lazy from hochschule.router.student_model import StudentModel
 
 __all__ = ["HochschuleModel"]
 
@@ -18,7 +18,7 @@ class HochschuleModel(HochschuleUpdateModel):
 
     adresse: AdresseModel
     """Die 1:1-zugehörige Adresse."""
-    studenten: list[StudentModel] = []
+    studenten: list[StudentModel] = Field(default_factory=list)
     """Die 1:N-Liste der Studenten."""
 
     model_config = ConfigDict(strict=True, extra="forbid", frozen=True)

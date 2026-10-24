@@ -6,6 +6,7 @@ import strawberry
 
 from hochschule.service.exceptions import AdresseRequiredError
 lazy from hochschule.entity import Adresse
+
 __all__ = ["AdresseDTO"]
 
 
@@ -20,7 +21,7 @@ class AdresseDTO:
     ort: str
 
     @classmethod
-    def from_adresse(cls, adresse: Adresse | None) -> "AdresseDTO":
+    def from_adresse(cls, adresse: Adresse | None) -> AdresseDTO:
         """Initialisierung von AdresseDTO durch ein Entity-Objekt von Adresse.
 
         :param adresse: Adresse-Objekt mit Decorators für SQLAlchemy

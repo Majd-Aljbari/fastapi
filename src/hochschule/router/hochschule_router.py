@@ -14,7 +14,7 @@ from hochschule.router.hochschule_find_model import (
     HochschuleResponseModel,
 )
 from hochschule.security import Role, RolesRequired, User
-from hochschule.service import HochschuleService
+lazy from hochschule.service import HochschuleService
 
 __all__ = ["hochschule_router"]
 

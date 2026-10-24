@@ -4,9 +4,9 @@ from dataclasses import dataclass
 
 import strawberry
 
-from hochschule.entity import Hochschule
 from hochschule.service.adresse_dto import AdresseDTO
 from hochschule.service.student_dto import StudentDTO
+lazy from hochschule.entity import Hochschule
 
 __all__ = ["HochschuleDTO"]
 
@@ -24,7 +24,7 @@ class HochschuleDTO:
     studenten: list[StudentDTO]
 
     @classmethod
-    def from_hochschule(cls, hochschule: Hochschule) -> "HochschuleDTO":
+    def from_hochschule(cls, hochschule: Hochschule) -> HochschuleDTO:
         """Initialisierung von HochschuleDTO durch ein Entity-Objekt von Hochschule.
 
         :param hochschule: Hochschule-Objekt mit Decorators zu SQLAlchemy

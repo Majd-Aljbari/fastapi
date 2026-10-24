@@ -4,7 +4,6 @@ from typing import Final
 
 from loguru import logger
 
-from hochschule.entity import Hochschule
 from hochschule.repository import HochschuleRepository, Session
 from hochschule.service.exceptions import (
     NameExistsError,
@@ -12,6 +11,7 @@ from hochschule.service.exceptions import (
     VersionOutdatedError,
 )
 from hochschule.service.hochschule_dto import HochschuleDTO
+lazy from hochschule.entity import Hochschule
 
 __all__ = ["HochschuleWriteService"]
 

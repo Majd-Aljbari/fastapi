@@ -5,8 +5,6 @@ from typing import Annotated
 from fastapi import Depends
 
 from hochschule.repository.hochschule_repository import HochschuleRepository
-from hochschule.security.dependencies import get_user_service
-from hochschule.security.user_service import UserService
 from hochschule.service.hochschule_service import HochschuleService
 from hochschule.service.hochschule_write_service import HochschuleWriteService
 

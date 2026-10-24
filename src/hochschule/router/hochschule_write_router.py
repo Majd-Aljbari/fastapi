@@ -8,10 +8,10 @@ from loguru import logger
 from hochschule.problem_details import ProblemDetails
 from hochschule.router.constants import IF_MATCH, IF_MATCH_MIN_LEN
 from hochschule.router.dependencies import get_write_service
-from hochschule.router.hochschule_model import HochschuleModel
-from hochschule.router.hochschule_update_model import HochschuleUpdateModel
 from hochschule.security import Role, RolesRequired
 from hochschule.service import HochschuleWriteService, send_mail
+lazy from hochschule.router.hochschule_model import HochschuleModel
+lazy from hochschule.router.hochschule_update_model import HochschuleUpdateModel
 
 __all__ = ["hochschule_write_router"]
 

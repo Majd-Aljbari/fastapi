@@ -1,9 +1,9 @@
 """Geschäftslogik zum Lesen von Hochschuldaten."""
 
-from collections.abc import Sequence
 from datetime import datetime
 from typing import Final
 from zoneinfo import ZoneInfo
+lazy from collections.abc import Sequence
 
 from loguru import logger
 from openpyxl import Workbook

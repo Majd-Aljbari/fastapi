@@ -34,6 +34,7 @@ class StudentModel(BaseModel):
         extra="forbid",
         frozen=True,
     )
+
     def to_student(self) -> Student:
         """Konvertierung in ein Student-Objekt für SQLAlchemy."""
         return Student(

@@ -1,6 +1,6 @@
 """Modul für die REST-Schnittstelle einschließlich Validierung."""
 
-from collections.abc import Sequence
+lazy from collections.abc import Sequence
 
 from hochschule.router.health_router import liveness, readiness, router as health_router
 from hochschule.router.hello_router import router as hello_router

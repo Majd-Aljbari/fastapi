@@ -42,18 +42,16 @@ from hochschule.config.dev.keycloak_populate import keycloak_populate
 from hochschule.config.dev.keycloak_populate_router import (
     router as keycloak_populate_router,
 )
+from hochschule.graphql_api import graphql_router
 from hochschule.problem_details import ProblemDetails
 from hochschule.repository.session_factory import engine
 from hochschule.router import (
     health_router,
     hello_router,
+    hochschule_router,
+    hochschule_write_router,
     shutdown_router,
-    # TODO: patient_router durch hochschule_router ersetzen
-    # patient_router,
-    # patient_write_router,
 )
-# TODO: graphql_router aktivieren sobald hochschule GraphQL Types erstellt sind
-# from hochschule.graphql_api import graphql_router
 from hochschule.security import (
     AuthorizationError,
     LoginError,
@@ -154,9 +152,9 @@ async def log_response_time(
 # --------------------------------------------------------------------------------------
 # R E S T
 # --------------------------------------------------------------------------------------
-# TODO: hochschule_router aktivieren sobald erstellt
-# app.include_router(hochschule_router, prefix="/rest")
-# app.include_router(hochschule_write_router, prefix="/rest")
+app.include_router(hochschule_router, prefix="/rest")
+app.include_router(hochschule_write_router, prefix="/rest")
+app.include_router(graphql_router, prefix="/graphql")
 app.include_router(auth_router, prefix="/auth")
 app.include_router(health_router, prefix="/health")
 app.include_router(shutdown_router, prefix="/admin")
@@ -166,8 +164,6 @@ if dev_db_populate:
     app.include_router(db_populate_router, prefix="/dev")
 if dev_keycloak_populate:
     app.include_router(keycloak_populate_router, prefix="/dev")
-
-
 
 
 # --------------------------------------------------------------------------------------

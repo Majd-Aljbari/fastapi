@@ -1,11 +1,10 @@
 """Entity-Klasse für Hochschuldaten."""
 
-from typing import Optional, Self, override
-lazy from dataclasses import InitVar
-lazy from datetime import date, datetime
+from typing import Self, override
+lazy from datetime import datetime
 
-from sqlalchemy import JSON, Identity, func
-from sqlalchemy.orm import Mapped, mapped_column, reconstructor, relationship
+from sqlalchemy import Identity, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from hochschule.entity.adresse import Adresse
 from hochschule.entity.base import Base
@@ -26,7 +25,7 @@ class Hochschule(Base):
     homepage: Mapped[str | None]
     """Die optionale URL der Homepage."""
 
-    adresse: Mapped[Optional["Adresse"]] = relationship(
+    adresse: Mapped[Adresse | None] = relationship(
         back_populates=lambda: Adresse.hochschule,
         innerjoin=True,
         cascade="save-update, delete",
@@ -34,8 +33,8 @@ class Hochschule(Base):
     """ 1:1-Beziehung zu Adresse """
 
     # 1:N-Beziehung zu Studenten (eine Hochschule hat eine Liste von Studenten)
-    studenten: Mapped[list["Student"]] = relationship(
-         back_populates=lambda: Student.hochschule,
+    studenten: Mapped[list[Student]] = relationship(
+        back_populates=lambda: Student.hochschule,
         cascade="save-update, delete",
     )
     """ 1:N-Beziehung zu Studenten """

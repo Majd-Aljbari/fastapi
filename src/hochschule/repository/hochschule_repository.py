@@ -1,16 +1,16 @@
 """Repository fuer persistente Hochschuldaten."""
 
-from collections.abc import Sequence
 from typing import Final
+lazy from collections.abc import Sequence
 
 from loguru import logger
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload, selectinload
 
 from hochschule.entity import Hochschule
-from hochschule.repository.hochschule_suchparameter import HochschuleSuchparameter
-from hochschule.repository.pageable import Pageable
 from hochschule.repository.slice import Slice
+lazy from hochschule.repository.hochschule_suchparameter import HochschuleSuchparameter
+lazy from hochschule.repository.pageable import Pageable
 
 __all__ = ["HochschuleRepository"]
 
@@ -177,7 +177,7 @@ class HochschuleRepository:
         hochschule_id: int,
         session: Session,
     ) -> bool:
-        """Abfrage, ob es den Hochschulnamen bei einer anderen Hochschule-ID bereits gibt.
+        """Abfrage, ob der Hochschulname bei einer anderen ID bereits vergeben ist.
 
         :param name: Name der Hochschule
         :param hochschule_id: eigene Hochschule-ID
@@ -216,7 +216,7 @@ class HochschuleRepository:
 
         :param hochschule: Die neuen Hochschuldaten
         :param session: Session für SQLAlchemy
-        :return: Die aktualisierte Hochschule oder None, falls kein Eintrag mit der ID existiert
+        :return: Die aktualisierte Hochschule oder None, falls kein Eintrag existiert
         :rtype: Hochschule | None
         """
         logger.debug("{}", hochschule)
@@ -240,9 +240,7 @@ class HochschuleRepository:
         logger.debug("hochschule_id={}", hochschule_id)
 
         if (
-            hochschule := self.find_by_id(
-                hochschule_id=hochschule_id, session=session
-            )
+            hochschule := self.find_by_id(hochschule_id=hochschule_id, session=session)
         ) is None:
             return
         session.delete(hochschule)

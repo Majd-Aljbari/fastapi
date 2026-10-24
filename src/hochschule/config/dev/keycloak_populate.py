@@ -21,7 +21,11 @@ from time import sleep
 from typing import Annotated
 
 from fastapi import Depends
-from keycloak import KeycloakAuthenticationError, KeycloakConnectionError, KeycloakPostError
+from keycloak import (
+    KeycloakAuthenticationError,
+    KeycloakConnectionError,
+    KeycloakPostError,
+)
 from loguru import logger
 
 from hochschule.config import csv_config
@@ -55,17 +59,24 @@ class KeycloakPopulateService:
             try:
                 self._remove_users()
                 self._create_users()
+            except KeycloakAuthenticationError:
+                logger.error(
+                    ">>> Keycloak: Ungültige Credentials! Bitte app.toml prüfen <<<"
+                )
+                return
+            except KeycloakConnectionError, KeycloakPostError:
+                if versuch == max_versuche:
+                    logger.error(
+                        ">>> Keine Keycloak-Verbindung! Ist Keycloak gestartet? <<<"
+                    )
+                    return
+                logger.debug(
+                    "Keycloak noch nicht bereit (Versuch {}), warte 3s ...", versuch
+                )
+                sleep(3)
+            else:
                 logger.warning(">>> Keycloak wurde neu geladen <<<")
                 return
-            except KeycloakAuthenticationError:
-                logger.error(">>> Keycloak: Ungültige Client-Credentials! Bitte app.toml prüfen <<<")
-                return
-            except (KeycloakConnectionError, KeycloakPostError):
-                if versuch == max_versuche:
-                    logger.error(">>> Keine Keycloak-Verbindung! Ist Keycloak gestartet? <<<")
-                    return
-                logger.debug("Keycloak noch nicht bereit (Versuch {}), warte 3s ...", versuch)
-                sleep(3)
 
     def _remove_users(self) -> None:
         self.user_service.remove_all_users()

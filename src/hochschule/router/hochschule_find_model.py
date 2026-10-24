@@ -1,4 +1,4 @@
-"""Pydantic-Modelle für das Lesen und Suchen von Hochschuldaten (GET Requests & Responses)."""
+"""Pydantic-Modelle für das Lesen und Suchen von Hochschuldaten."""
 
 from typing import Annotated
 
@@ -11,7 +11,7 @@ from hochschule.repository import (
     HochschuleSuchparameter,
     Pageable,
 )
-from hochschule.service import HochschuleDTO
+lazy from hochschule.service import HochschuleDTO
 
 __all__ = [
     "HochschuleFindModel",
@@ -73,7 +73,7 @@ class HochschuleResponseModel(BaseModel):
     model_config = ConfigDict(from_attributes=True, strict=True, extra="forbid")
 
     @classmethod
-    def from_dto(cls, hochschule: HochschuleDTO) -> "HochschuleResponseModel":
+    def from_dto(cls, hochschule: HochschuleDTO) -> HochschuleResponseModel:
         """Konvertiert ein HochschuleDTO in ein Pydantic-Modell für den Response."""
         return cls.model_validate(hochschule)
 
