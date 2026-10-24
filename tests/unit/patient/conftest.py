@@ -18,7 +18,6 @@
 from typing import TYPE_CHECKING
 
 import pytest
-
 from patient.repository import PatientRepository
 from patient.security import UserService
 from patient.service import PatientService, PatientWriteService

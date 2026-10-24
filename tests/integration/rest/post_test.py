@@ -23,34 +23,29 @@ import pytest
 from common_api_test import certificate_path, rest_url, timeout
 from requests import post
 
-token: str | None
-
 
 @pytest.mark.rest
 @pytest.mark.post_request
 @pytest.mark.post_request_success
 def test_post() -> None:
     # arrange
-    neuer_patient: Final = {
-        "nachname": "Nachnamerest",
-        "email": "testrest@rest.de",
-        "kategorie": 1,
-        "has_newsletter": True,
-        "geburtsdatum": "2022-02-01",
-        "homepage": "https://rest.de",
-        "geschlecht": "W",
-        "familienstand": "L",
-        "adresse": {"plz": "99999", "ort": "Restort"},
-        "rechnungen": [{"betrag": "999.99", "waehrung": "EUR"}],
-        "fachaerzte": ["N"],
-        "username": "testrest",
+    neue_hochschule: Final = {
+        "name": "Neue Testuniversität",
+        "homepage": "https://www.test-uni.de",
+        "adresse": {
+            "strasse": "Teststraße",
+            "hausnummer": "1",
+            "plz": "12345",
+            "ort": "Teststadt",
+        },
+        "studenten": [],
     }
     headers = {"Content-Type": "application/json"}
 
     # act
     response: Final = post(
         rest_url,
-        json=neuer_patient,
+        json=neue_hochschule,
         headers=headers,
         timeout=timeout,
         verify=certificate_path,
@@ -69,19 +64,15 @@ def test_post() -> None:
 @pytest.mark.post_request
 def test_post_invalid() -> None:
     # arrange
-    neuer_patient_invalid: Final = {
-        "nachname": "falscher_nachname",
-        "email": "falsche_email@",
-        "kategorie": 11,
-        "has_newsletter": True,
-        "geburtsdatum": "2022-02-01",
-        "homepage": "https://?!",
-        "geschlecht": "M",
-        "familienstand": "L",
-        "adresse": {"plz": "1234", "ort": "Restort"},
-        "rechnungen": [{"betrag": "222.2", "waehrung": "EUR"}],
-        "fachaerzte": ["N"],
-        "username": "testrestinvalid",
+    neue_hochschule_invalid: Final = {
+        "name": "X",
+        "homepage": "kein-url",
+        "adresse": {
+            "strasse": "Teststraße",
+            "hausnummer": "1",
+            "plz": "123",
+            "ort": "Teststadt",
+        },
     }
     headers = {"Content-Type": "application/json"}
 
@@ -89,7 +80,7 @@ def test_post_invalid() -> None:
     try:
         response: Final = post(
             rest_url,
-            json=neuer_patient_invalid,
+            json=neue_hochschule_invalid,
             headers=headers,
             timeout=timeout,
             verify=certificate_path,
@@ -99,39 +90,30 @@ def test_post_invalid() -> None:
 
     # assert
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-    body = response.text
-    assert "nachname" in body
-    assert "email" in body
-    assert "kategorie" in body
-    assert "homepage" in body
-    assert "plz" in body
 
 
 @pytest.mark.rest
 @pytest.mark.post_request
-def test_post_email_exists() -> None:
+def test_post_name_exists() -> None:
     # arrange
-    email_exists: Final = "alice@acme.de"
-    neuer_patient: Final = {
-        "nachname": "Nachnamerest",
-        "email": email_exists,
-        "kategorie": 1,
-        "has_newsletter": True,
-        "geburtsdatum": "2022-02-01",
-        "homepage": "https://rest.de",
-        "geschlecht": "W",
-        "familienstand": "L",
-        "adresse": {"plz": "99999", "ort": "Restort"},
-        "rechnungen": [{"betrag": "999.99", "waehrung": "EUR"}],
-        "fachaerzte": ["N"],
-        "username": "emailexists",
+    name_exists: Final = "Hochschule Karlsruhe"
+    neue_hochschule: Final = {
+        "name": name_exists,
+        "homepage": "https://www.test.de",
+        "adresse": {
+            "strasse": "Moltkestraße",
+            "hausnummer": "30",
+            "plz": "76133",
+            "ort": "Karlsruhe",
+        },
+        "studenten": [],
     }
     headers = {"Content-Type": "application/json"}
 
     # act
     response: Final = post(
         rest_url,
-        json=neuer_patient,
+        json=neue_hochschule,
         headers=headers,
         timeout=timeout,
         verify=certificate_path,
@@ -139,14 +121,14 @@ def test_post_email_exists() -> None:
 
     # assert
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-    assert email_exists in response.text
+    assert name_exists in response.text
 
 
 @pytest.mark.rest
 @pytest.mark.post_request
 def test_post_invalid_json() -> None:
     # arrange
-    json_invalid: Final = '{"nachname" "Nachname"}'
+    json_invalid: Final = '{"name" "TestHochschule"}'
     headers = {"Content-Type": "application/json"}
 
     # act

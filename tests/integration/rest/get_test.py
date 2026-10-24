@@ -25,10 +25,10 @@ from requests import get
 
 @pytest.mark.rest
 @pytest.mark.get_request
-@pytest.mark.parametrize("email", ["admin@acme.com", "alice@acme.edu", "alice@acme.de"])
-def test_get_by_email(email: str) -> None:
+@pytest.mark.parametrize("name", ["Hochschule Karlsruhe", "Hochschule Pforzheim"])
+def test_get_by_name(name: str) -> None:
     # arrange
-    params = {"email": email}
+    params = {"name": name}
     token: Final = login()
     assert token is not None
     headers = {"Authorization": f"Bearer {token}"}
@@ -48,18 +48,18 @@ def test_get_by_email(email: str) -> None:
     content: Final = response_body["content"]
     assert isinstance(content, list)
     assert len(content) == 1
-    patient = content[0]
-    assert patient is not None
-    assert patient.get("email") == email
-    assert patient.get("id") is not None
+    hochschule = content[0]
+    assert hochschule is not None
+    assert hochschule.get("name") == name
+    assert hochschule.get("id") is not None
 
 
 @pytest.mark.rest
 @pytest.mark.get_request
-@pytest.mark.parametrize("email", ["nicht@vorhanden.com", "joe.doe@acme.de"])
-def test_get_by_email_not_found(email: str) -> None:
+@pytest.mark.parametrize("name", ["NichtVorhanden", "FooBar Hochschule"])
+def test_get_by_name_not_found(name: str) -> None:
     # arrange
-    params = {"email": email}
+    params = {"name": name}
     token: Final = login()
     assert token is not None
     headers = {"Authorization": f"Bearer {token}"}
@@ -79,18 +79,16 @@ def test_get_by_email_not_found(email: str) -> None:
 
 @pytest.mark.rest
 @pytest.mark.get_request
-@pytest.mark.parametrize("teil", ["Alice", "n"])
-def test_get_by_nachname(teil: str) -> None:
+@pytest.mark.parametrize("teil", ["Hochschule", "a"])
+def test_get_namen(teil: str) -> None:
     # arrange
-    params = {"nachname": teil}
     token: Final = login()
     assert token is not None
     headers = {"Authorization": f"Bearer {token}"}
 
     # act
     response: Final = get(
-        rest_url,
-        params=params,
+        f"{rest_url}/namen/{teil}",
         headers=headers,
         timeout=timeout,
         verify=certificate_path,
@@ -98,44 +96,17 @@ def test_get_by_nachname(teil: str) -> None:
 
     # assert
     assert response.status_code == HTTPStatus.OK
-    response_body: Final = response.json()
-    assert isinstance(response_body, dict)
-    content: Final = response_body["content"]
-    for p in content:
-        nachname = p.get("nachname")
-        assert nachname is not None
-        assert isinstance(nachname, str)
-        assert teil.lower() in nachname.lower()
-        assert p.get("id") is not None
+    namen: Final = response.json()
+    assert isinstance(namen, list)
+    assert len(namen) > 0
+    for name in namen:
+        assert teil.lower() in name.lower()
 
 
 @pytest.mark.rest
 @pytest.mark.get_request
-@pytest.mark.parametrize("nachname", ["Notfound", "Foo-Bar"])
-def test_get_by_nachname_not_found(nachname: str) -> None:
-    # arrange
-    params = {"nachname": nachname}
-    token: Final = login()
-    assert token is not None
-    headers = {"Authorization": f"Bearer {token}"}
-
-    # act
-    response: Final = get(
-        rest_url,
-        params=params,
-        headers=headers,
-        timeout=timeout,
-        verify=certificate_path,
-    )
-
-    # assert
-    assert response.status_code == HTTPStatus.NOT_FOUND
-
-
-@pytest.mark.rest
-@pytest.mark.get_request
-@pytest.mark.parametrize("teil", ["a", "n"])
-def test_get_nachnamen(teil: str) -> None:
+@pytest.mark.parametrize("teil", ["xxxyyy", "ZZZUnbekannt"])
+def test_get_namen_not_found(teil: str) -> None:
     # arrange
     token: Final = login()
     assert token is not None
@@ -143,33 +114,7 @@ def test_get_nachnamen(teil: str) -> None:
 
     # act
     response: Final = get(
-        f"{rest_url}/nachnamen/{teil}",
-        headers=headers,
-        timeout=timeout,
-        verify=certificate_path,
-    )
-
-    # assert
-    assert response.status_code == HTTPStatus.OK
-    nachnamen: Final = response.json()
-    assert isinstance(nachnamen, list)
-    assert len(nachnamen) > 0
-    for nachname in nachnamen:
-        assert teil in nachname.lower()
-
-
-@pytest.mark.rest
-@pytest.mark.get_request
-@pytest.mark.parametrize("teil", ["xxx", "Abc"])
-def test_get_nachnamen_not_found(teil: str) -> None:
-    # arrange
-    token: Final = login()
-    assert token is not None
-    headers = {"Authorization": f"Bearer {token}"}
-
-    # act
-    response: Final = get(
-        f"{rest_url}/nachnamen/{teil}",
+        f"{rest_url}/namen/{teil}",
         headers=headers,
         timeout=timeout,
         verify=certificate_path,

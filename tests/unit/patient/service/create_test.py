@@ -21,11 +21,10 @@ from typing import Final
 from zoneinfo import ZoneInfo
 
 import pytest
-lazy from pytest_mock import MockerFixture
-
 from patient.entity import Adresse, Familienstand, Geschlecht, Patient
 from patient.service import EmailExistsError, UsernameExistsError
 from patient.service.exceptions import EmptyUsernameError
+lazy from pytest_mock import MockerFixture
 
 timezone = ZoneInfo("Europe/Berlin")
 

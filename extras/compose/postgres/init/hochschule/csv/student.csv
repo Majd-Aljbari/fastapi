@@ -1,0 +1,4 @@
+id;matrikelnummer;vorname;nachname;email;hochschule_id
+1000;12345678;Max;Mustermann;max.mustermann@h-ka.de;1000
+1001;87654321;Anna;Musterfrau;anna.musterfrau@h-ka.de;1000
+1002;11223344;Tom;Test;tom.test@kit.edu;1001
