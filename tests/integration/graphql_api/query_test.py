@@ -22,8 +22,6 @@ import pytest
 from common_api_test import certificate_path, graphql_url, login_graphql, timeout
 from requests import post
 
-GRAPHQL_PATH: Final = "/graphql"
-
 
 @pytest.mark.graphql
 @pytest.mark.query
@@ -36,22 +34,20 @@ def test_query_id() -> None:
     query: Final = {
         "query": """
             {
-                patient(patientId: "20") {
+                hochschule(hochschuleId: "1000") {
                     version
-                    nachname
-                    email
-                    kategorie
-                    hasNewsletter
-                    geburtsdatum
+                    name
                     homepage
-                    geschlecht
-                    familienstand
                     adresse {
                         plz
                         ort
                     }
-                    fachaerzte
-                    username
+                    studenten {
+                        matrikelnummer
+                        vorname
+                        nachname
+                        email
+                    }
                 }
             }
         """,
@@ -72,8 +68,8 @@ def test_query_id() -> None:
     assert isinstance(response_body, dict)
     data: Final = response_body["data"]
     assert data is not None
-    patient: Final = data["patient"]
-    assert isinstance(patient, dict)
+    hochschule: Final = data["hochschule"]
+    assert isinstance(hochschule, dict)
     assert response_body.get("errors") is None
 
 
@@ -88,8 +84,8 @@ def test_query_id_notfound() -> None:
     query: Final = {
         "query": """
             {
-                patient(patientId: "999999") {
-                    nachname
+                hochschule(hochschuleId: "999999") {
+                    name
                 }
             }
         """,
@@ -108,13 +104,13 @@ def test_query_id_notfound() -> None:
     assert response.status_code == HTTPStatus.OK
     response_body: Final = response.json()
     assert isinstance(response_body, dict)
-    assert response_body["data"]["patient"] is None
+    assert response_body["data"]["hochschule"] is None
     assert response_body.get("errors") is None
 
 
 @pytest.mark.graphql
 @pytest.mark.query
-def test_query_email() -> None:
+def test_query_name() -> None:
     # arrange
     token: Final = login_graphql()
     assert token is not None
@@ -123,23 +119,11 @@ def test_query_email() -> None:
     query: Final = {
         "query": """
             {
-                patienten(suchparameter: {email: "admin@acme.com"}) {
+                hochschulen(suchparameter: {name: "Hochschule Karlsruhe"}) {
                     id
                     version
-                    nachname
-                    email
-                    kategorie
-                    hasNewsletter
-                    geburtsdatum
+                    name
                     homepage
-                    geschlecht
-                    familienstand
-                    adresse {
-                        plz
-                        ort
-                    }
-                    fachaerzte
-                    username
                 }
             }
         """,
@@ -158,15 +142,15 @@ def test_query_email() -> None:
     assert response.status_code == HTTPStatus.OK
     response_body: Final = response.json()
     assert isinstance(response_body, dict)
-    patienten: Final = response_body["data"]["patienten"]
-    assert isinstance(patienten, list)
-    assert len(patienten) > 0
+    hochschulen: Final = response_body["data"]["hochschulen"]
+    assert isinstance(hochschulen, list)
+    assert len(hochschulen) > 0
     assert response_body.get("errors") is None
 
 
 @pytest.mark.graphql
 @pytest.mark.query
-def test_query_email_notfound() -> None:
+def test_query_name_notfound() -> None:
     # arrange
     token: Final = login_graphql()
     assert token is not None
@@ -175,7 +159,7 @@ def test_query_email_notfound() -> None:
     query: Final = {
         "query": """
             {
-                patienten(suchparameter: {email: "not.found@acme.com"}) {
+                hochschulen(suchparameter: {name: "NichtVorhandenXYZ"}) {
                     id
                 }
             }
@@ -195,95 +179,6 @@ def test_query_email_notfound() -> None:
     assert response.status_code == HTTPStatus.OK
     response_body: Final = response.json()
     assert isinstance(response_body, dict)
-    patienten: Final = response_body["data"]["patienten"]
-    assert isinstance(patienten, list)
-    assert len(patienten) == 0
-    assert response_body.get("errors") is None
-
-
-@pytest.mark.graphql
-@pytest.mark.query
-def test_query_nachname() -> None:
-    # arrange
-    token: Final = login_graphql()
-    assert token is not None
-    headers: Final = {"Authorization": f"Bearer {token}"}
-
-    query: Final = {
-        "query": """
-            {
-                patienten(suchparameter: {nachname: "Alice"}) {
-                    id
-                    version
-                    nachname
-                    email
-                    kategorie
-                    hasNewsletter
-                    geburtsdatum
-                    homepage
-                    geschlecht
-                    familienstand
-                    adresse {
-                        plz
-                        ort
-                    }
-                    fachaerzte
-                    username
-                }
-            }
-        """,
-    }
-
-    # act
-    response: Final = post(
-        graphql_url,
-        json=query,
-        headers=headers,
-        timeout=timeout,
-        verify=certificate_path,
-    )
-
-    # assert
-    assert response.status_code == HTTPStatus.OK
-    response_body: Final = response.json()
-    assert isinstance(response_body, dict)
-    patienten: Final = response_body["data"]["patienten"]
-    assert isinstance(patienten, list)
-    assert len(patienten) > 0
-    assert response_body.get("errors") is None
-
-
-@pytest.mark.graphql
-@pytest.mark.query
-def test_query_nachname_notfound() -> None:
-    # arrange
-    token: Final = login_graphql()
-    assert token is not None
-    headers: Final = {"Authorization": f"Bearer {token}"}
-
-    query: Final = {
-        "query": """
-            {
-                patienten(suchparameter: {nachname: "Nichtvorhanden"}) {
-                    id
-                }
-            }
-        """,
-    }
-
-    # act
-    response: Final = post(
-        graphql_url,
-        json=query,
-        headers=headers,
-        timeout=timeout,
-        verify=certificate_path,
-    )
-
-    # assert
-    assert response.status_code == HTTPStatus.OK
-    response_body: Final = response.json()
-    assert isinstance(response_body, dict)
-    patienten: Final = response_body["data"]["patienten"]
-    assert isinstance(patienten, list)
-    assert len(patienten) == 0
+    hochschulen: Final = response_body["data"]["hochschulen"]
+    assert isinstance(hochschulen, list)
+    assert len(hochschulen) == 0

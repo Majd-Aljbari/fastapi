@@ -122,6 +122,15 @@ class DbPopulateService:
                     connection=connection,
                 )
                 connection.commit()
+            for tabelle in tabellen:
+                connection.execute(text(
+                    f"SELECT setval("
+                    f"  pg_get_serial_sequence('{tabelle}', 'id'),"
+                    f"  (SELECT COALESCE(MAX(id), 999) FROM {tabelle}),"
+                    f"  true"
+                    f")"
+                ))
+            connection.commit()
         self.engine_admin.dispose()
 
     # "Pandas" statt COPY (PostgreSQL): pandas.load_csv() angeblich 5-7x langsamer

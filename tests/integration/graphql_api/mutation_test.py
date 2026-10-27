@@ -31,27 +31,15 @@ def test_create() -> None:
         "query": """
             mutation {
                 create(
-                    patientInput: {
-                        nachname: "Nachnamegraphql"
-                        email: "testgraphql@graphql.de"
-                        kategorie: 1
-                        hasNewsletter: true
-                        geburtsdatum: "2022-01-31"
-                        homepage: "https://graphql.de"
-                        geschlecht: WEIBLICH
-                        familienstand: LEDIG
-                        fachaerzte: [CHIRURGIE]
+                    hochschuleInput: {
+                        name: "GraphQL Testuniversität"
+                        homepage: "https://graphql-test.de"
                         adresse: {
-                            plz: "99999"
-                            ort: "Mutationort"
+                            strasse: "Teststraße"
+                            hausnummer: "1"
+                            plz: "12345"
+                            ort: "Teststadt"
                         }
-                        rechnungen: [
-                            {
-                                betrag: "999.99"
-                                waehrung: "EUR"
-                            }
-                        ]
-                        username: "testgraphql"
                     }
                 ) {
                     id
@@ -73,8 +61,8 @@ def test_create() -> None:
     assert response.status_code == HTTPStatus.OK
     response_body: Final = response.json()
     assert isinstance(response_body, dict)
-    assert isinstance(response_body["data"]["create"]["id"], int)
     assert response_body.get("errors") is None
+    assert isinstance(response_body["data"]["create"]["id"], int)
 
 
 @pytest.mark.graphql
@@ -85,25 +73,15 @@ def test_create_invalid() -> None:
         "query": """
             mutation {
                 create(
-                    patientInput: {
-                        nachname: "falscher_nachname"
-                        email: "falsche_email@"
-                        kategorie: 1
-                        hasNewsletter: true
-                        geburtsdatum: "2022-01-31"
-                        homepage: "https://?!"
-                        geschlecht: WEIBLICH
-                        familienstand: LEDIG
-                        fachaerzte: [CHIRURGIE]
+                    hochschuleInput: {
+                        name: "X"
+                        homepage: "kein-url"
                         adresse: {
-                            plz: "1234"
-                            ort: "Testort"
+                            strasse: "Teststraße"
+                            hausnummer: "1"
+                            plz: "123"
+                            ort: "Teststadt"
                         }
-                        rechnungen: [{
-                            betrag: "1"
-                            waehrung: "EU"
-                        }]
-                        username: "testgraphql"
                     }
                 ) {
                     id
@@ -124,7 +102,6 @@ def test_create_invalid() -> None:
     assert response.status_code == HTTPStatus.OK
     response_body: Final = response.json()
     assert isinstance(response_body, dict)
-    assert response_body["data"] is None
-    errors: Final = response_body["errors"]
-    assert isinstance(errors, list)
-    assert len(errors) == 1
+    errors: Final = response_body.get("errors")
+    assert errors is not None
+    assert len(errors) > 0

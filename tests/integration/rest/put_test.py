@@ -29,10 +29,10 @@ HOMEPAGE_UPDATE: Final = "https://www.h-ka-updated.de"
 @pytest.mark.put_request
 def test_put() -> None:
     # arrange
-    hochschule_id: Final = 1003
+    hochschule_id: Final = 1001
     if_match: Final = '"0"'
     geaenderte_hochschule: Final = {
-        "name": "Hochschule Pforzheim Updated",
+        "name": "KIT Updated",
         "homepage": HOMEPAGE_UPDATE,
     }
     token: Final = login()

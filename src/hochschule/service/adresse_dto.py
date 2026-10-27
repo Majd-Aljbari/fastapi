@@ -10,8 +10,8 @@ lazy from hochschule.entity import Adresse
 __all__ = ["AdresseDTO"]
 
 
-@dataclass(eq=False, slots=True, kw_only=True)
 @strawberry.type(name="Adresse")
+@dataclass(eq=False, slots=True, kw_only=True)
 class AdresseDTO:
     """DTO-Klasse für die Adresse, insbesondere ohne Decorators für SQLAlchemy."""
 
