@@ -122,14 +122,24 @@ class DbPopulateService:
                     connection=connection,
                 )
                 connection.commit()
-            for tabelle in tabellen:
-                connection.execute(text(
-                    f"SELECT setval("
-                    f"  pg_get_serial_sequence('{tabelle}', 'id'),"
-                    f"  (SELECT COALESCE(MAX(id), 999) FROM {tabelle}),"
-                    f"  true"
-                    f")"
-                ))
+            connection.execute(
+                text(
+                    "SELECT setval(pg_get_serial_sequence('hochschule', 'id'),"
+                    " (SELECT COALESCE(MAX(id), 999) FROM hochschule), true)"
+                )
+            )
+            connection.execute(
+                text(
+                    "SELECT setval(pg_get_serial_sequence('adresse', 'id'),"
+                    " (SELECT COALESCE(MAX(id), 999) FROM adresse), true)"
+                )
+            )
+            connection.execute(
+                text(
+                    "SELECT setval(pg_get_serial_sequence('student', 'id'),"
+                    " (SELECT COALESCE(MAX(id), 999) FROM student), true)"
+                )
+            )
             connection.commit()
         self.engine_admin.dispose()
 

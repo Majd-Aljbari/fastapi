@@ -1,6 +1,6 @@
 """Pydantic-Model zum Aktualisieren von Hochschuldaten (PUT Request)."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated
 
 from loguru import logger
@@ -40,8 +40,8 @@ class HochschuleUpdateModel(BaseModel):
             homepage=str(self.homepage) if self.homepage is not None else None,
             adresse=None,
             studenten=[],
-            erzeugt=datetime.now(),
-            aktualisiert=datetime.now(),
+            erzeugt=datetime.now(tz=UTC),
+            aktualisiert=datetime.now(tz=UTC),
         )
         logger.debug("hochschule={}", hochschule)
         return hochschule
@@ -55,8 +55,8 @@ class HochschuleUpdateModel(BaseModel):
     #         homepage=str(self.homepage) if self.homepage is not None else None,
     #         adresse=None,
     #         studenten=[],
-    #         erzeugt=datetime.now(),
-    #         aktualisiert=datetime.now(),
+    #         erzeugt=datetime.now(tz=UTC),
+    #         aktualisiert=datetime.now(tz=UTC),
     #     )
     #     logger.debug("hochschule={}", hochschule)
     #     return hochschule
