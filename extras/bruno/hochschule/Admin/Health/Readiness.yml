@@ -16,7 +16,7 @@ runtime:
     - expression: res.headers['content-type']
       operator: eq
       value: application/json
-    - expression: res.body.status
+    - expression: res.body.db
       operator: eq
       value: up
 

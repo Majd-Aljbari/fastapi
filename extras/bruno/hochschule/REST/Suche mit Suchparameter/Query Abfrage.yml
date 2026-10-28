@@ -1,0 +1,23 @@
+info:
+  name: Query Abfrage
+  type: http
+  seq: 4
+
+http:
+  method: QUERY
+  url: https://localhost:8000/rest/query
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Karlsruhe",
+        "page": 0,
+        "size": 2
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

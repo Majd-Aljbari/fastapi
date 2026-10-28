@@ -9,4 +9,4 @@ request:
     - name: adminUrl
       value: "{{baseUrl}}/admin"
     - name: healthUrl
-      value: "{{adminUrl}}/health"
+      value: "{{baseUrl}}/health"

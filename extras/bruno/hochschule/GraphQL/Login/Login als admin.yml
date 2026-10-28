@@ -21,6 +21,9 @@ graphql:
       }
 
 runtime:
+  script:
+    res: |
+      bru.setVar('bearerToken', res.body.data.login.token);
   assertions:
     - expression: res.status
       operator: eq

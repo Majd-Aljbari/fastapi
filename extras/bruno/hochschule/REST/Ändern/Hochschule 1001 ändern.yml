@@ -20,7 +20,9 @@ http:
           "name": "KIT Karlsruhe",
           "homepage": "https://www.kit.edu"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
 
 runtime:
   assertions:

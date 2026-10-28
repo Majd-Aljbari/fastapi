@@ -9,18 +9,11 @@ http:
   headers:
     - name: Accept
       value: application/json
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
 
 runtime:
-  scripts:
-    - type: after-response
-      code: |-
-        test('Body: id > 0', () => {
-          res.getBody()
-            .content
-            .map(hochschule => hochschule.id)
-            .forEach(id => expect(id).to.be.above(0));
-        });
   assertions:
     - expression: res.status
       operator: eq

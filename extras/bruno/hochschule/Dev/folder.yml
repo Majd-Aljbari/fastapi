@@ -4,7 +4,21 @@ info:
   seq: 2
 
 request:
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
   variables:
     - name: devUrl
       value: "{{baseUrl}}/dev"
+  scripts:
+    - type: before-request
+      code: |-
+        const tokenUrl = bru.getCollectionVar('tokenUrl');
+        const username = bru.getEnvVar('username') || 'admin';
+        const password = bru.getEnvVar('password') || 'p';
+        const response = await bru.sendRequest({
+          method: 'QUERY',
+          url: tokenUrl,
+          data: { username, password },
+        });
+        bru.setVar('TOKEN', response.data.token);

@@ -8,3 +8,35 @@ request:
   variables:
     - name: restUrl
       value: "{{baseUrl}}/rest"
+
+runtime:
+  script:
+    req: |
+      const https = require('https');
+      const username = bru.getEnvVar('username') || 'admin';
+      const password = bru.getEnvVar('password') || 'p';
+      const body = JSON.stringify({ username, password });
+      const token = await new Promise((resolve, reject) => {
+        const req = https.request({
+          hostname: '127.0.0.1',
+          port: 8000,
+          path: '/auth/token',
+          method: 'QUERY',
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(body)
+          },
+          rejectUnauthorized: false
+        }, (res) => {
+          let data = '';
+          res.on('data', chunk => data += chunk);
+          res.on('end', () => {
+            try { resolve(JSON.parse(data).token); }
+            catch (e) { reject(e); }
+          });
+        });
+        req.on('error', reject);
+        req.write(body);
+        req.end();
+      });
+      bru.setVar('bearerToken', token);

@@ -15,7 +15,9 @@ http:
     - name: id
       value: "1000"
       type: path
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
 
 runtime:
   assertions:

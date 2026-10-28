@@ -20,7 +20,9 @@ http:
           "name": "Nicht Vorhanden",
           "homepage": null
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
 
 runtime:
   assertions:

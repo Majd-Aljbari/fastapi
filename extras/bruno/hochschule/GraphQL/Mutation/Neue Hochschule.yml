@@ -28,7 +28,9 @@ graphql:
           id
         }
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
 
 runtime:
   assertions:

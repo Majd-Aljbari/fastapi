@@ -13,7 +13,9 @@ http:
   body:
     type: json
     data: ""
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
 
 runtime:
   assertions:

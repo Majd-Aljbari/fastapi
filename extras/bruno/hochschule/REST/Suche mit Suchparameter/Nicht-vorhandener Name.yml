@@ -5,15 +5,13 @@ info:
 
 http:
   method: GET
-  url: "{{restUrl}}"
+  url: "{{restUrl}}?name=XYZNichtVorhanden"
   headers:
     - name: Accept
       value: application/json
-  params:
-    - name: name
-      value: XYZNichtVorhanden
-      type: query
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
 
 runtime:
   assertions:

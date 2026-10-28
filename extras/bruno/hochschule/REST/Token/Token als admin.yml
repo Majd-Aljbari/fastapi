@@ -19,6 +19,9 @@ http:
       }
 
 runtime:
+  script:
+    res: |
+      bru.setVar('bearerToken', res.body.token);
   assertions:
     - expression: res.status
       operator: eq
@@ -31,7 +34,7 @@ runtime:
       value: .\..+\..+
     - expression: res.body.expires_in
       operator: eq
-      value: "1800"
+      value: "300"
     - expression: res.body.rollen
       operator: isArray
     - expression: res.body.rollen

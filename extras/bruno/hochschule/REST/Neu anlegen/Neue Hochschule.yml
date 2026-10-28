@@ -31,7 +31,9 @@ http:
               }
           ]
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
 
 runtime:
   assertions:

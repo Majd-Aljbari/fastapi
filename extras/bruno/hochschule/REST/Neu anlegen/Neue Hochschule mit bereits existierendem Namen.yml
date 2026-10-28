@@ -18,7 +18,9 @@ http:
               "ort": "Karlsruhe"
           }
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
 
 runtime:
   assertions:

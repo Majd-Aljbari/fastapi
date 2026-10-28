@@ -5,15 +5,13 @@ info:
 
 http:
   method: GET
-  url: "{{restUrl}}"
+  url: "{{restUrl}}?name=Karlsruhe"
   headers:
     - name: Accept
       value: application/json
-  params:
-    - name: name
-      value: Karlsruhe
-      type: query
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{TOKEN}}"
 
 runtime:
   assertions:

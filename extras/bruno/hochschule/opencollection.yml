@@ -34,5 +34,15 @@ request:
       value: "{{baseUrl}}/auth"
     - name: tokenUrl
       value: "{{authUrl}}/token"
+    - name: graphqlUrl
+      value: "{{baseUrl}}/graphql"
+    - name: username
+      value: admin
+    - name: password
+      value: p
+    - name: clientId
+      value: python-client
+    - name: clientSecret
+      value: acme12345
 bundled: false
 extensions: {}
